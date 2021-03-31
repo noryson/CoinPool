@@ -5,13 +5,7 @@ contract Pool {
     //----------------------------------
     // Type definitions
     //----------------------------------
-    struct CryptoAsset {
-        string Name;
-        uint   Amount;
-    }  // struct CryptoAsset 
-
     enum PoolStatus {initialising,addingmembers,readytorun,running,concluded} 
-    
     //----------------------------------
     // Data
     //----------------------------------
@@ -22,12 +16,12 @@ contract Pool {
                                    // of this pool.
     // Pool parameters                                  
     /*  @invariants: assets supported are BNB, Ether and Cryptonite */
-    CryptoAsset contributionAsset;
+    Pool_util.CryptoAsset contributionAsset;
 
     /*  @invariants: assets supported are BNB, Ether and Cryptonite
         @invariants: stakedAsset != asset
     */ 
-    CryptoAsset stakingAsset;
+    Pool_util.CryptoAsset stakingAsset;
 
     uint maxNoOfMembers = 1; // Maximum number of contributors.
     uint minNoOfMembers = 1; // Minimum number of contributors.
@@ -104,8 +98,8 @@ contract Pool {
       contributionAsset.Amount = 1;   // Fixed Amount that every contributor
                                       // spends per cycle.
 
-      stakingAsset.Name = "bnb"; // Asset name to be use if the contributor 
-                                 // fails to contribut to the pool.
+      stakingAsset.Name = "bnb"; // Asset name to be used when the contributor 
+                                 // fails to contribute to the pool.
                                  // (bnb,ether,crypt)
       stakingAsset.Amount = 1;   // staking amount to sufficiently prevent 
                                  // defaulers of this pool.
@@ -117,7 +111,7 @@ contract Pool {
     //----------------------------------
     // Helper Funcions
     //----------------------------------
-    function getNextUniqueId() private returns(uint256) {
+    function getNextUniqueId() public returns(uint256) {
        UniqueID++; 
        return UniqueID;
     } // getNextUniqueId()
@@ -147,16 +141,6 @@ contract Pool {
       }
       
     } // getPoolStatus_asString()
-
-    function isSameStringValue(string memory _a, string memory _b)
-      internal pure returns (bool) {
-      if (bytes(_a).length != bytes(_b).length) {
-        return false;
-      } else {
-        return (keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b)));
-      }
-    } // isSameStringValue()
-
 
     //----------------------------------
     // GUI Funcions
@@ -204,7 +188,7 @@ contract Pool {
     function setRequirement_forContributionAsset(string memory _Name, uint _Amount) 
       public onlyWhenInitialising {
       
-      if (!isSameStringValue(contributionAsset.Name,_Name)) {
+      if (!Pool_util.isSameStringValue(contributionAsset.Name,_Name)) {
         contributionAsset.Name = _Name;
       }
       if (contributionAsset.Amount != _Amount){
@@ -224,7 +208,7 @@ contract Pool {
     function setRequirement_forStakingAsset(string memory _Name, uint _Amount) 
       public onlyWhenInitialising {
       
-      if (!isSameStringValue(stakingAsset.Name,_Name)) {
+      if (!Pool_util.isSameStringValue(stakingAsset.Name,_Name)) {
         stakingAsset.Name = _Name;
       }
       if (stakingAsset.Amount != _Amount){
@@ -289,9 +273,9 @@ contract Pool {
     } // getData_forCycles()
 
     function getData_forPool() public view
-      returns (string memory _PoolStatusText) {
+      returns (string memory _poolStatusText) {
       
-      _PoolStatusText = getPoolStatus_asString();
+      _poolStatusText = getPoolStatus_asString();
 
     } // getData_forPool()
 
@@ -379,4 +363,323 @@ contract Pool {
     } // runThisPool()
 
 } // contract Pool
+
+library Pool_util {
+
+    //----------------------------------
+    // Type definitions
+    //----------------------------------
+    struct CryptoAsset {
+        string Name;
+        uint   Amount;
+    }  // struct CryptoAsset 
+    struct CryptoAssetWithAddress {
+        CryptoAsset Asset;
+        address walletAddress;        
+    }  // struct CryptoAssetWithAddress 
+
+    //----------------------------------
+    // Funcions
+    //----------------------------------
+    function isSameStringValue(string memory _a, string memory _b)
+      internal pure returns (bool) {
+      if (bytes(_a).length != bytes(_b).length) {
+        return false;
+      } else {
+        return (keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b)));
+      }
+    } // isSameStringValue()
+
+} // Pool_util
+
+contract Member {
+    //----------------------------------
+    // Type definitions
+    //----------------------------------
+    enum MemberStatus {initialising,readytoverify,readytorun,running,concluded} 
+    //----------------------------------
+    // Data
+    //----------------------------------
+    uint private id;  // unique Identification for each Member.
+    uint private memberid;  // The "member id" of of the member that joined this pool.
+
+    Pool_util.CryptoAssetWithAddress contributionAsset;
+    Pool_util.CryptoAssetWithAddress stakingAsset;
+    Pool_util.CryptoAssetWithAddress payoutAsset;
+
+    MemberStatus memberStatus; // (initialising,readytoverify,readytorun,
+                               //  running,concluded)  
+    //----------------------------------
+    // Modifiers
+    //----------------------------------
+    modifier onlyWhenInitialising() {
+        require(
+            memberStatus == MemberStatus.initialising,
+            "This task can only be done while Initialising this Member."
+        );
+        _;
+    } // onlyWhenInitialising()
+
+    modifier onlyWhenReadyToVerfyMember() {
+        require(
+            memberStatus == MemberStatus.readytoverify,
+            "This task can only be done when verifing this member."
+        );
+        _;
+    } // onlyWhenAddingMembers()
+
+    modifier onlyWhenItsReadyToRun() {
+        require(
+            memberStatus == MemberStatus.readytorun,
+            "This task can only be done when this Member is Ready to participate in the Pool."
+        );
+        _;
+    } // onlyWhenItsReadyToRun()
+
+    modifier onlyWhenThePoolIsRunning() {
+        require(
+            memberStatus == MemberStatus.running,
+            "This task can only be done while the Member is an active part of the Pool."
+        );
+        _;
+    } // onlyWhenThePoolIsRunning()
+
+    modifier onlyWhenThePoolHasConculded() {
+        require(
+            memberStatus == MemberStatus.concluded,
+            "This task can only be done after the pool has been concluded for this Member ."
+        );
+        _;
+    } // onlyWhenThePoolHasConculded()
+    //----------------------------------
+    // Funcions
+    //----------------------------------
+    constructor(Pool _ParentPool,
+                uint _memberid,
+                string memory _contributionAsset_Name,
+                uint _contributionAsset_Amount,
+                string memory _stakingAsset_Name,
+                uint _stakingAsset_Amount
+                ) {
+      id = _ParentPool.getNextUniqueId();
+      memberid = _memberid;
+
+      // set defaults
+
+      // Asset name to be use with the fixed
+      // amount. (bnb,ether,crypt)
+      contributionAsset.Asset.Name = _contributionAsset_Name; 
+      // Fixed Amount that every member spends per cycle.
+      contributionAsset.Asset.Amount = _contributionAsset_Amount;
+
+      // Asset name to be use by the member who
+      // fails to contribute to the pool.
+      // (bnb,ether,crypt)
+      stakingAsset.Asset.Name = _stakingAsset_Name; 
+      // staking amount to be used as colateral.
+      stakingAsset.Asset.Amount = _stakingAsset_Amount;   
+
+      // Asset name to be use by the member for payouts 
+      // (bnb,ether,crypt)
+      payoutAsset.Asset.Name = _contributionAsset_Name; 
+      payoutAsset.Asset.Amount = 0;   // payout amount.
+
+      memberStatus = MemberStatus.initialising;
+
+    } // constructor()
+    //----------------------------------
+    // Helper Funcions
+    //----------------------------------
+    function getMemberStatus_asString() private view 
+      returns(string memory _memberStatusText) {
+
+      if (memberStatus == MemberStatus.initialising) {
+         // initialising
+         _memberStatusText = "initialising";
+      }
+      else if (memberStatus == MemberStatus.readytoverify) {
+         // Ready to have all the member data verified
+         _memberStatusText = "readytoverify";
+      }
+      else if (memberStatus == MemberStatus.readytorun) {
+         // Ready to Run
+         // member data cannot be changed when its gets here 
+         _memberStatusText = "readytorun";
+      }
+      else if (memberStatus == MemberStatus.running) {
+         // running
+         _memberStatusText = "running";
+      }
+      else {
+         // concluded 
+         _memberStatusText = "concluded";
+      }
+      
+    } // getMemberStatus_asString()
+    //----------------------------------
+    // GUI Funcions
+    //----------------------------------
+    function getKeyData() public view 
+      returns (uint _id, uint _memberid) {
+      
+       _id = id;
+       _memberid = memberid;
+
+    } // getKeyData()
+
+    function setKeyData(uint _memberid) public onlyWhenInitialising {
+      
+      if (memberid != _memberid){
+       memberid = _memberid;
+      }
+
+    } // setKeyData()
+
+    function getRequirement_forContributionAsset() public view
+      returns (string memory _Name, uint _Amount, address _walletAddress ) {
+      
+       _Name = contributionAsset.Asset.Name;
+       _Amount = contributionAsset.Asset.Amount;
+       _walletAddress = contributionAsset.walletAddress;
+
+    } // getRequirement_forContributionAsset()
+
+    function setRequirement_forContributionAsset(string memory _Name, uint _Amount, address _walletAddress) 
+      public onlyWhenInitialising {
+      
+      if (!Pool_util.isSameStringValue(contributionAsset.Asset.Name,_Name)) {
+        contributionAsset.Asset.Name = _Name;
+      }
+      if (contributionAsset.Asset.Amount != _Amount){
+        contributionAsset.Asset.Amount = _Amount;
+      }
+      if (contributionAsset.walletAddress != _walletAddress){
+        contributionAsset.walletAddress = _walletAddress;
+      }
+
+    } // setRequirement_forContributionAsset()
+
+    function getRequirement_forStakingAsset() public view
+      returns (string memory _Name, uint _Amount, address _walletAddress) {
+      
+       _Name = stakingAsset.Asset.Name;
+       _Amount = stakingAsset.Asset.Amount;
+       _walletAddress = stakingAsset.walletAddress;
+
+    } // getRequirement_forStakingAsset()
+
+    function setRequirement_forStakingAsset(string memory _Name, uint _Amount, address _walletAddress) 
+      public onlyWhenInitialising {
+      
+      if (!Pool_util.isSameStringValue(stakingAsset.Asset.Name,_Name)) {
+        stakingAsset.Asset.Name = _Name;
+      }
+      if (stakingAsset.Asset.Amount != _Amount){
+        stakingAsset.Asset.Amount = _Amount;
+      }
+      if (stakingAsset.walletAddress != _walletAddress){
+        stakingAsset.walletAddress = _walletAddress;
+      }
+
+    } // setRequirement_forStakingAsset()
+
+    function getRequirement_forPayOutAsset() public view
+      returns (string memory _Name, uint _Amount, address _walletAddress) {
+      
+       _Name = payoutAsset.Asset.Name;
+       _Amount = payoutAsset.Asset.Amount;
+       _walletAddress = payoutAsset.walletAddress;
+
+    } // getRequirement_forPayOutAsset()
+
+    function setRequirement_forPayOutAsset(string memory _Name, uint _Amount, address _walletAddress) 
+      public onlyWhenInitialising {
+      
+      if (!Pool_util.isSameStringValue(payoutAsset.Asset.Name,_Name)) {
+        payoutAsset.Asset.Name = _Name;
+      }
+      if (payoutAsset.Asset.Amount != _Amount){
+        payoutAsset.Asset.Amount = _Amount;
+      }
+      if (payoutAsset.walletAddress != _walletAddress){
+        payoutAsset.walletAddress = _walletAddress;
+      }
+
+    } // setRequirement_forPayOutAsset()
+
+    function getData_forMember() public view
+      returns (string memory _memberStatusText) {
+      
+      _memberStatusText = getMemberStatus_asString();
+
+    } // getData_forMember()
+
+    //----------------------------------
+    // External Functions
+    //----------------------------------
+    function isMemberStatus_initialising() public view
+      returns(bool _value) {
+      
+      _value = (memberStatus == MemberStatus.initialising);
+
+    } // isMemberStatus_initialising()
+
+    function isMemberStatus_readytoverify() public view
+      returns(bool _value) {
+      
+      _value = (memberStatus == MemberStatus.readytoverify);
+
+    } // isMemberStatus_readytoverify()
+    
+    function setMemberStatusTo_readytoverify() public onlyWhenInitialising {
+      // To be set by "the member" when the 
+      // initial configuration is complete.
+      // Now the member is also wishing to verfy all details.
+      memberStatus = MemberStatus.readytoverify;
+
+    } // setMemberStatusTo_readytoverify()
+
+    function isMemberStatus_readytorun() public view
+      returns(bool _value) {
+      
+      _value = (memberStatus == MemberStatus.readytorun);
+
+    } // isMemberStatus_readytorun()
+
+    function setMemberStatusTo_readytorun() public onlyWhenReadyToVerfyMember {
+      // To be set by the "member" when verfied.
+      // All the needed checks (staking amount,...) have been done.
+      // The member is now wishing to run the pool (go live).
+      memberStatus = MemberStatus.readytorun;
+
+    } // setMemberStatusTo_readytorun()
+
+    function isMemberStatus_running() public view
+      returns(bool _value) {
+      
+      _value = (memberStatus == MemberStatus.running);
+
+    } // isMemberStatus_running()
+
+    function setMemberStatusTo_running() public onlyWhenItsReadyToRun {
+
+      memberStatus = MemberStatus.readytorun;
+
+    } // setMemberStatusTo_running()
+
+    function isMemberStatus_concluded() public view
+      returns(bool _value) {
+      
+      _value = (memberStatus == MemberStatus.concluded);
+
+    } // isMemberStatus_concluded()
+
+    function setMemberStatusTo_concluded() public onlyWhenThePoolIsRunning {
+
+      memberStatus = MemberStatus.concluded;
+
+    } // setMemberStatusTo_concluded()
+
+
+}
 
