@@ -18,4 +18,16 @@ contract BSC-Master-Project{
     function displayPendingContributions(){}
     function joinContribution(uint contributionID, string stakedAsset, string amount){}
     function payContribution(uint contributionID, uint amount){}
+
+    struct bnbVault {
+        unit userAsset;
+    }
+
+    mapping (address => mapping (address => uint256)) public allowed;
+    function setUserAsset(uint amount, address userAsset) public {
+        bnbVault[userAsset] = amount;
+    }
+    function getUserAmount(address userAsset) public view returns(uint) { 
+        return allowed;
+    }
 }
