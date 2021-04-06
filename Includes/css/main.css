@@ -91,41 +91,21 @@ div.aboutwrapper >div> p > span{
     font-weight: lighter;
 }
 
-div.about-item1{
-    grid-area: about-item;
-    grid-template-areas: 'about-item about-item' 'about-item about-item';
-}
-
-footer{
-    display: grid;
-    float: left;
+.footer{
+    display: flex;
     background-color: #ffffff;
+    width: 100%;
+    justify-content: space-around;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    
 }
 
-footer > div.footersection{
-    grid-column: auto auto auto auto auto;
-    grid-row: 1/ span 1;
-    grid-template-areas: 'home tf pool chart set';
-}
 
-.footerhome{
-    grid-area: home;
-}
-
-.footertf{
-    grid-area: tf;
-}
-
-.footerpool{
-    grid-area: pool;
-}
-
-.footerchart{
-    grid-area: chart;
-}
-
-.footerset{
-    grid-area: set;
+.footer >img{
+    width: 33px;
+    height: auto;
+    opacity: 70%;
 }
 
 [class*="col-"]{
