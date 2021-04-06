@@ -12,6 +12,45 @@ body{
     font-size: 14px;
     font-weight: normal;
 }
+h1{
+    font-size: 21.33px;
+    font-weight: normal;
+}
+btn.getstarted{
+    background-color: #F936B4;
+}
+div.aboutsection{
+    background-color: #000000;
+    border: #ffffff27 1px solid;
+    float: left;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    align-content: center;
+}
+div.aboutsection > div > img.aboutimage{
+    width: absolute;
+    height: 82%;
+    display: inline;
+}
+div.aboutsection > div > p{
+    font-family: Arial;
+    font-size: 9px;
+    font-weight: bold;
+    background-color: #ffffff;
+    color: #7F7F7F;
+    padding-top: 10px;
+    position: bottom fixed;
+    margin: 0px;
+}
+div.aboutsection >div> p > span{
+    color: #CCCCCC;
+    font-weight: lighter;
+}
+div.about-item1{
+    grid-area: about-item;
+    grid-template-areas: 'about-item about-item' 'about-item about-item';
+}
 /*@media only screen and (max-width: 600px) {*/
     [class*="col-"]{
         float: left;
