@@ -6,6 +6,11 @@ stylesheet for Dapp
 */
 body{
     background-color: #040319;
+    color: #ffffff;
+    display: block;
+    font-family: poppins;
+    font-size: 14px;
+    font-weight: normal;
 }
 @media only screen and (max-width: 600px) {
     
