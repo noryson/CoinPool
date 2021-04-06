@@ -1,0 +1,16 @@
+/* 
+stylesheet for Dapp
+
++Body
++Nav Bar
+*/
+body{
+    background-color: #040319;
+}
+@media only screen and (max-width: 600px) {
+    
+}
+
+@media only screen and (min-width: 768px){
+
+}
