@@ -1,6 +1,115 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.6.2 <0.9.0;
 
+contract PoolRequirements{
+  //----------------------------------
+  // Type definitions
+  //----------------------------------
+  //----------------------------------
+  // Data
+  //----------------------------------
+  uint private maxNoOfMembers = 1; // Maximum number of contributors.
+  uint private minNoOfMembers = 1; // Minimum number of contributors.
+
+  Pool_Utils.CryptoAsset private contributionAsset; 
+  Pool_Utils.CryptoAsset private stakingAsset;
+  //----------------------------------
+  // Modifiers
+  //----------------------------------
+  //----------------------------------
+  // Functions
+  //----------------------------------
+  constructor() { 
+    // set defaults
+    contributionAsset.Name = "bnb"; // Asset name to be use with the fixed
+                                    // amount. (bnb,ether,crypt)
+    contributionAsset.Amount = 1;   // Fixed Amount that every contributor
+                                    // spends per cycle.
+
+    stakingAsset.Name = "bnb"; // Asset name to be used when the contributor 
+                               // fails to contribute to the pool.
+                               // (bnb,ether,crypt)
+    stakingAsset.Amount = 1;   // staking amount to sufficiently prevent 
+                               // defaulters of this pool.
+  } // constructor()
+
+  //MAX
+  function getMaxNoOfMembers() public view
+    returns (uint _maxNoOfMembers) {
+    _maxNoOfMembers = maxNoOfMembers;
+  } // getMaxNoOfMembers()
+
+  function setMaxNoOfMembers(uint _maxNoOfMembers) public {
+    maxNoOfMembers = _maxNoOfMembers;
+  } // setMaxNoOfMembers()
+
+  //MIN
+  function getMinNoOfMembers() public view
+    returns (uint _minNoOfMembers) {
+    _minNoOfMembers = minNoOfMembers;
+  } // getMinNoOfMembers()
+
+  function setMinNoOfMembers(uint _minNoOfMembers) public {
+    minNoOfMembers = _minNoOfMembers;
+  } // setMinNoOfMembers()
+
+  // Contributions
+  function getFixedContributionAmount() public view 
+    returns(uint) {
+    return contributionAsset.Amount;
+  } // getFixedContributionAmount()
+
+  function setContributionAsset(string memory _Name, uint _Amount) 
+    public {
+      
+    if (!Pool_Utils.isSameStringValue(contributionAsset.Name,_Name)) {
+      contributionAsset.Name = _Name;
+    }
+    if (contributionAsset.Amount != _Amount){
+      contributionAsset.Amount = _Amount;
+    }
+  } // setrContributionAsset()
+
+  function getContributionAsset() public view
+    returns (string memory _Name, uint _Amount) {
+      
+     _Name = contributionAsset.Name;
+     _Amount = contributionAsset.Amount;
+
+  } //getContributionAsset()
+
+  // Staking
+  function getStakingAsset() public view
+    returns (string memory _Name, uint _Amount) {
+      
+     _Name = stakingAsset.Name;
+     _Amount = stakingAsset.Amount;
+
+  } // getStakingAsset()
+
+  function setStakingAsset(string memory _Name, uint _Amount) 
+    public {
+      
+    if (!Pool_Utils.isSameStringValue(stakingAsset.Name,_Name)) {
+      stakingAsset.Name = _Name;
+    }
+    if (stakingAsset.Amount != _Amount){
+      stakingAsset.Amount = _Amount;
+    }
+  } // setStakingAsset()
+  //----------------------------------
+  // Helper Functions
+  //----------------------------------
+  //----------------------------------
+  // GUI Functions
+  //----------------------------------
+  //----------------------------------
+  // External Functions
+  //----------------------------------
+} // contract PoolRequirements
+
+
+
 contract Pool {
     //----------------------------------
     // Type definitions
@@ -10,37 +119,16 @@ contract Pool {
     // Data
     //----------------------------------
     uint private id;  // unique Identification for each pool event.
-    uint256 private createdDate;   // Timestamp when the pool was created.
     address private creator_ownerid;  // The "owner id" that created this pool.
                                    // The owner may or may not be a member 
                                    // of this pool.
     string poolName = "noname";  // the pool name that the pool owner assigns                              
-    // Pool parameters                                  
-    /*  @invariants: assets supported are BNB, Ether and Cryptonite */
-    Pool_Utils.CryptoAsset public contributionAsset;
-
-    /*  @invariants: assets supported are BNB, Ether and Cryptonite
-        @invariants: stakedAsset != asset
-    */ 
-    Pool_Utils.CryptoAsset public stakingAsset;
-
-    uint maxNoOfMembers = 1; // Maximum number of contributors.
-    uint minNoOfMembers = 1; // Minimum number of contributors.
-
-    uint numberOfCycles = 1; // Total number of cycles.    
-    uint cycleInterval = 1;  // Total number of cycles intervals 
-                             // measured in days (week,month?) 
-                             // (days between cycles).    
 
     // Pool working data
-    uint256 cycleStartDate;      // Timestamp that the cycle started.
-    uint currentCycleNo = 0;     // The current cycle number
-    uint currentNoOfMembers = 0; // The current number of members;
-
-    uint256 uniqueID = 0; // Source of the auto generated id
-
-    PoolStatus poolStatus;    // (initialising,addingmembers,readytorun,
-                           //  running,concluded)  
+    PoolStatus poolStatus; // (initialising,addingmembers,readytorun,
+                           //  running,concluded)
+    
+    PoolRequirements poolRequirements;  // Required defaults/parameters for this pool                          
 
     MembersList  membersList; // List of all members that will be
                               // playing in this pool
@@ -51,7 +139,7 @@ contract Pool {
     modifier onlyWhenInitialising() {
         require(
             poolStatus == PoolStatus.initialising,
-            "This task can only be done when Initialising this Pool."
+            "P01" //"This task can only be done when Initialising this Pool."
         );
         _;
     } // onlyWhenInitialising()
@@ -59,7 +147,7 @@ contract Pool {
     modifier onlyWhenAddingMembers() {
         require(
             poolStatus == PoolStatus.addingmembers,
-            "This task can only be done when Adding Members to this Pool."
+            "P02" //"This task can only be done when Adding Members to this Pool."
         );
         _;
     } // onlyWhenAddingMembers()
@@ -67,7 +155,7 @@ contract Pool {
     modifier onlyWhenItsReadyToRun() {
         require(
             poolStatus == PoolStatus.readytorun,
-            "This task can only be done when this Pool is Ready to Run."
+            "P03" //"This task can only be done when this Pool is Ready to Run."
         );
         _;
     } // onlyWhenItsReadyToRun()
@@ -75,7 +163,7 @@ contract Pool {
     modifier onlyWhenThePoolIsRunning() {
         require(
             poolStatus == PoolStatus.running,
-            "This task can only be done when the Pool is Running."
+            "P04" //"This task can only be done when the Pool is Running."
         );
         _;
     } // onlyWhenThePoolIsRunning()
@@ -83,7 +171,7 @@ contract Pool {
     modifier onlyWhenThePoolHasConculded() {
         require(
             poolStatus == PoolStatus.concluded,
-            "This task can only be done when the Pool has Concluded."
+            "P05" //"This task can only be done when the Pool has Concluded."
         );
         _;
     } // onlyWhenThePoolHasConculded()
@@ -92,27 +180,16 @@ contract Pool {
     // Functions
     //----------------------------------
     constructor(address _ownerid, uint _uniqueId, bool participateInThisPool) {
-      id = _uniqueId; //getNextUniqueId();
-      createdDate =  block.timestamp;
+      id = _uniqueId;
       creator_ownerid = _ownerid;
-
-      // set defaults
-      contributionAsset.Name = "bnb"; // Asset name to be use with the fixed
-                                      // amount. (bnb,ether,crypt)
-      contributionAsset.Amount = 1;   // Fixed Amount that every contributor
-                                      // spends per cycle.
-
-      stakingAsset.Name = "bnb"; // Asset name to be used when the contributor 
-                                 // fails to contribute to the pool.
-                                 // (bnb,ether,crypt)
-      stakingAsset.Amount = 1;   // staking amount to sufficiently prevent 
-                                 // defaulters of this pool.
 
       poolStatus = PoolStatus.initialising; 
 
-      membersList = new MembersList(this); // List of all members that will be
-                                           // playing in this pool                       
-      cyclesList = new CyclesList(this,membersList);  // List of cycles that have already been run.
+      poolRequirements = new PoolRequirements(); // Required defaults for this pool                          
+
+      membersList = new MembersList(poolRequirements); // List of all members that will be
+                                                       // playing in this pool                       
+      cyclesList = new CyclesList(poolRequirements, membersList);  // List of cycles that have already been run.
 
       if (participateInThisPool) {
         membersList.addNewMember(_ownerid);
@@ -123,11 +200,6 @@ contract Pool {
     //----------------------------------
     // Helper Functions
     //----------------------------------
-    //function getNextUniqueId() public returns(uint256) {
-    //   uniqueID++; 
-    //   return uniqueID;
-    //} // getNextUniqueId()
-
     function getPoolStatus_asString() private view 
       returns(string memory _poolStatusText) {
 
@@ -197,10 +269,9 @@ contract Pool {
     } // setPoolName()
 
     function getKeyData() public view 
-      returns (uint _id, uint256 _createdDate, address _creator_ownerid) {
+      returns (uint _id, address _creator_ownerid) {
       
        _id = id;
-       _createdDate = createdDate;
        _creator_ownerid = creator_ownerid;
 
     } // getKeyData()
@@ -212,101 +283,6 @@ contract Pool {
       }
 
     } // setKeyData()
-
-    function getRequirement_forContributionAsset() public view
-      returns (string memory _Name, uint _Amount) {
-      
-       _Name = contributionAsset.Name;
-       _Amount = contributionAsset.Amount;
-
-    } //getRequirement_forContributionAsset()
-
-    function setRequirement_forContributionAsset(string memory _Name, uint _Amount) 
-      public onlyWhenInitialising {
-      
-      if (!Pool_Utils.isSameStringValue(contributionAsset.Name,_Name)) {
-        contributionAsset.Name = _Name;
-      }
-      if (contributionAsset.Amount != _Amount){
-        contributionAsset.Amount = _Amount;
-      }
-
-    } // setRequirement_forContributionAsset()
-
-    function getRequirement_forStakingAsset() public view
-      returns (string memory _Name, uint _Amount) {
-      
-       _Name = stakingAsset.Name;
-       _Amount = stakingAsset.Amount;
-
-    } // getRequirement_forStakingAsset()
-
-    function setRequirement_forStakingAsset(string memory _Name, uint _Amount) 
-      public onlyWhenInitialising {
-      
-      if (!Pool_Utils.isSameStringValue(stakingAsset.Name,_Name)) {
-        stakingAsset.Name = _Name;
-      }
-      if (stakingAsset.Amount != _Amount){
-        stakingAsset.Amount = _Amount;
-      }
-
-    } // setRequirement_forStakingAsset()
-
-    function getRequirement_forMembers() public view
-      returns (uint _maxNoOfMembers, uint _minNoOfMembers) {
-      
-       _maxNoOfMembers = maxNoOfMembers;
-       _minNoOfMembers = minNoOfMembers;
-
-    } // getRequirement_forMembers()
-
-    function setRequirement_forMembers(uint _maxNoOfMembers, uint _minNoOfMembers) 
-      public onlyWhenInitialising {
-      
-      if (maxNoOfMembers != _maxNoOfMembers){
-        maxNoOfMembers = _maxNoOfMembers;
-      }
-      if (minNoOfMembers != _minNoOfMembers){
-        minNoOfMembers = _minNoOfMembers;
-      }
-
-    } // setRequirement_forMembers()
-
-    function getRequirement_forcycles() public view
-      returns (uint _numberOfCycles, uint _cycleInterval) {
-      
-       _numberOfCycles = numberOfCycles;
-       _cycleInterval = cycleInterval;
-
-    } // getRequirement_forcycles()
-
-    function setRequirement_forcycles(uint _numberOfCycles, uint _cycleInterval) 
-      public onlyWhenInitialising {
-      
-      if (numberOfCycles != _numberOfCycles){
-        numberOfCycles = _numberOfCycles;
-      }
-      if (cycleInterval != _cycleInterval){
-        cycleInterval = _cycleInterval;
-      }
-
-    } // setRequirement_forcycles()
-
-    function getData_forMembers() public view
-      returns (uint _currentNoOfMembers) {
-      
-       _currentNoOfMembers = currentNoOfMembers;
-
-    } // getData_forMembers()
-
-    function getData_forCycles() public view
-      returns (uint256 _cycleStartDate, uint _currentCycleNo) {
-      
-       _cycleStartDate = cycleStartDate;
-       _currentCycleNo = currentCycleNo;
-
-    } // getData_forCycles()
 
     function getData_forPool() public view
       returns (string memory _poolStatusText) {
@@ -377,34 +353,56 @@ contract Pool {
 
     } // isPoolStatus_concluded()
 
-    function runThisPool() public onlyWhenItsReadyToRun
+    function processThisPool() public onlyWhenItsReadyToRun
       returns(bool _value) {
+      // This will be called by some looping mechanism of a parent contract
+
       // go live
-      uint MembersArraySize = 1; //PoolMember.Length; TODO
-      if ((MembersArraySize >= minNoOfMembers ) && 
-          (MembersArraySize <= maxNoOfMembers)) {
-        // Try to start running Pool
-        // Do first cycle....
-        // -- Check that every pool member has the cycle paying amount.
-        //    -- if not then remove from the staking amount
+      uint MembersArraySize = membersList.getLength();
 
-        // TODO
+      if ((MembersArraySize >= poolRequirements.getMinNoOfMembers()) && 
+          (MembersArraySize <= poolRequirements.getMaxNoOfMembers())) {
+        //------------------------------
+        // Check Members
+        // todo
 
-        poolStatus = PoolStatus.running;
+        //------------------------------
+        // Check Cycles 
+        // (initialising ==> running ==> concluded)
+        if (cyclesList.isPoolCycleListStatus_initialising()) {
+          // Start cycles
+          cyclesList.setCycleListStatusTo_running();
+        }
+        else if (cyclesList.isPoolCycleListStatus_running()) {
+          // process all remaining cycles
+          cyclesList.processCycles();
+        }
+        else if (cyclesList.isPoolCycleListStatus_concluded()) {
+          // nothing more to do in this pool
+          poolStatus = PoolStatus.concluded;
+        }  
+        //------------------------------
         _value = true; 
       }
       else {
         _value = false; 
       }
-    } // runThisPool()
+    } // processThisPool()
 
-    function getMembersList() public view returns(MembersList _membersList){
+    function getPoolRequirements() public view 
+      returns(PoolRequirements _poolRequirements){
+      _poolRequirements = poolRequirements;
+    } // getPoolRequirements()
+
+    function getMembersList() public view 
+      returns(MembersList _membersList){
       _membersList = membersList;
-    }
+    } // getMembersList()
 
-    function getCyclesList() public view returns(CyclesList _cyclesList){
+    function getCyclesList() public view 
+      returns(CyclesList _cyclesList){
       _cyclesList = cyclesList;
-    }
+    } // getCyclesList()
 
 } // contract Pool
 
@@ -416,8 +414,6 @@ contract PoolsList{
     //----------------------------------
     // Data
     //----------------------------------
-    // Todo Main parentMain;
-
     Pool[] public listOfPools;
 
     // PoolList working data
@@ -428,9 +424,8 @@ contract PoolsList{
     //----------------------------------
     // Functions
     //----------------------------------
-    constructor(/*Main _parentMain todo*/) {
+    constructor() {
 
-      //todo parentMain = _parentMain;
     } // constructor()
     //----------------------------------
     // Helper Functions
@@ -474,13 +469,18 @@ contract PoolsList{
          listOfPools.push(_NewPool);
 
          _index = listOfPools.length -1;
-
     } // addNewPool() 
-
     //----------------------------------
     // External Functions
     //----------------------------------
-
+    function processAllPools() public {
+      // This will be called by some looping mechanism of a parent contract
+      Pool _thisPool;
+      for (uint i = 0; i < listOfPools.length; i++) {
+        _thisPool = listOfPools[i];
+        _thisPool.processThisPool();
+      } // for loop 
+    } // processAllPools()
 
 } //contract PoolsList 
 
@@ -550,9 +550,6 @@ contract Member {
     uint private id;  // unique Identification for each Member.
     address private userid;  // The "user id" of of the member that joined this pool.
     
-    Pool private parentPool;
-    MembersList private parentMembersList;
-
     Pool_Utils.CryptoAssetWithAddress contributionAsset;
     Pool_Utils.CryptoAssetWithAddress stakingAsset;
     Pool_Utils.CryptoAssetWithAddress payoutAsset;
@@ -565,7 +562,7 @@ contract Member {
     modifier onlyWhenInitialising() {
         require(
             memberStatus == MemberStatus.initialising,
-            "This task can only be done while Initialising this Pool Member."
+            "M01" //"This task can only be done while Initialising this Pool Member."
         );
         _;
     } // onlyWhenInitialising()
@@ -573,7 +570,7 @@ contract Member {
     modifier onlyWhenReadyToVerfyMember() {
         require(
             memberStatus == MemberStatus.readytoverify,
-            "This task can only be done when verifing this Pool Member."
+            "M02" //"This task can only be done when verifing this Pool Member."
         );
         _;
     } // onlyWhenAddingMembers()
@@ -581,7 +578,7 @@ contract Member {
     modifier onlyWhenPoolMemberIsReadyToRun() {
         require(
             memberStatus == MemberStatus.readytorun,
-            "This task can only be done when this Pool Member is Ready to participate in the Pool."
+            "M03" //"This task can only be done when this Pool Member is Ready to participate in the Pool."
         );
         _;
     } // onlyWhenPoolMemberIsReadyToRun()
@@ -589,7 +586,7 @@ contract Member {
     modifier onlyWhenThePoolIsRunning() {
         require(
             memberStatus == MemberStatus.running,
-            "This task can only be done while the Pool Member is an active part of the Pool."
+            "M04" //"This task can only be done while the Pool Member is an active part of the Pool."
         );
         _;
     } // onlyWhenPoolMemberIsReadyToRun()
@@ -597,15 +594,14 @@ contract Member {
     modifier onlyWhenThePoolHasConculded() {
         require(
             memberStatus == MemberStatus.concluded,
-            "This task can only be done after the pool has been concluded for this Member."
+            "M05" //"This task can only be done after the pool has been concluded for this Member."
         );
         _;
     } // onlyWhenThePoolHasConculded()
     //----------------------------------
     // Functions
     //----------------------------------
-    constructor(MembersList _parentMemberslist,
-                Pool _parentPool,
+    constructor(PoolRequirements _poolRequirements,
                 uint _uniqueid,
                 address _userid
                 ) {
@@ -613,17 +609,13 @@ contract Member {
       id  = _uniqueid ;
       userid = _userid;
 
-      parentMembersList = _parentMemberslist;
-      parentPool = _parentPool;
-
       // set defaults
-
       string memory _AssetName;
       uint _AssetAmount;
 
       // Asset name to be use with the fixed
       // amount. (bnb,ether,crypt)
-      (_AssetName, _AssetAmount) = parentPool.getRequirement_forContributionAsset();
+      (_AssetName, _AssetAmount) = _poolRequirements.getContributionAsset();
 
       contributionAsset.Asset.Name = _AssetName;
       // Fixed Amount that every member spends per cycle.
@@ -632,7 +624,7 @@ contract Member {
       // Asset name to be use by the member who
       // fails to contribute to the pool.
       // (bnb,ether,crypt)
-      (_AssetName, _AssetAmount) = parentPool.getRequirement_forStakingAsset();
+      (_AssetName, _AssetAmount) = _poolRequirements.getStakingAsset();
 
       stakingAsset.Asset.Name = _AssetName; 
       // staking amount to be used as colateral.
@@ -675,6 +667,36 @@ contract Member {
       }
       
     } // getMemberStatus_asString()
+
+    function getContributionBalanceAmount() public view 
+      returns(uint _contributionBalance) {
+      
+      _contributionBalance = contributionAsset.Asset.Amount;
+
+    } // getContributionBalanceAmount()
+
+    function depositContributionAmount(uint _depositAmount) public 
+      returns(uint _contributionBalance) {
+      
+      contributionAsset.Asset.Amount = (contributionAsset.Asset.Amount + _depositAmount);
+      _contributionBalance = contributionAsset.Asset.Amount;
+
+    } // depositContributionAmount()
+
+    function extractContributionAmount(uint _fixedAmountToExtract) public 
+      returns(uint _extractedAmount) {
+      
+      contributionAsset.Asset.Amount = (contributionAsset.Asset.Amount - _fixedAmountToExtract);
+      _extractedAmount = _fixedAmountToExtract;
+
+    } // extractContributionAmount()
+
+    function depositCycleWinningAmount(uint _cycleWinningAmount) public {
+      
+      payoutAsset.Asset.Amount = (payoutAsset.Asset.Amount + _cycleWinningAmount);
+
+    } // depositCycleWinningAmount()
+
     //----------------------------------
     // GUI Functions
     //----------------------------------
@@ -863,7 +885,7 @@ contract MembersList {
     //----------------------------------
     // Data
     //----------------------------------
-    Pool public parentPool;
+    PoolRequirements poolRequirements;
 
     Member[] public listOfMembers;
 
@@ -875,9 +897,9 @@ contract MembersList {
     //----------------------------------
     // Functions
     //----------------------------------
-    constructor(Pool _parentPool) {
+    constructor(PoolRequirements _poolRequirements) {
 
-      parentPool = _parentPool;
+      poolRequirements = _poolRequirements;
 
     } // constructor()
     //----------------------------------
@@ -904,6 +926,22 @@ contract MembersList {
       listOfMembers[_index] = listOfMembers[listOfMembers.length-1];
       listOfMembers.pop();
     } // removeMember_atIndex()
+
+    function extractAllMemberContributions(uint _fixedAmountToExtract) public 
+      returns(uint _totalContributions) {
+      // For the testing period this will only be simulated
+      uint poolMemberSize = listOfMembers.length;
+
+      _totalContributions = 0;
+      uint _extractedAmount;
+      Member _member;
+      for (uint i = 0; i < poolMemberSize; i++) {
+        _member = listOfMembers[i];
+        _extractedAmount = _member.extractContributionAmount(_fixedAmountToExtract);
+        _totalContributions = (_totalContributions + _extractedAmount);
+      } // for loop 
+    } // extractAllMemberContributions()
+
     //----------------------------------
     // GUI Functions
     //----------------------------------
@@ -914,9 +952,12 @@ contract MembersList {
        (userAlreadyExists, _uniqueId, _index) = isThisUserAlreadyAMember(_userid);
 
        if (!userAlreadyExists) {
+         // Check Max number of members
+         require(listOfMembers.length < poolRequirements.getMaxNoOfMembers());
+
          _uniqueId = getNextUniqueId();
 
-         Member _NewMember = new Member(this, parentPool, _uniqueId, _userid);
+         Member _NewMember = new Member(poolRequirements, _uniqueId, _userid);
          listOfMembers.push(_NewMember);
 
          _index = listOfMembers.length -1;
@@ -976,58 +1017,57 @@ contract MembersList {
 
     } // getUserID_usingUniqueID()
     
-    function getKeyData_usingUniqueID(uint _uniqueId) public view 
-      returns (bool _doesExist, address _userid) {
+    // function getKeyData_usingUniqueID(uint _uniqueId) public view 
+    //   returns (bool _doesExist, address _userid) {
       
-      uint _index;
-      (_doesExist, _index) = getMemberIndex_usingUniqueID(_uniqueId);
+    //   uint _index;
+    //   (_doesExist, _index) = getMemberIndex_usingUniqueID(_uniqueId);
 
-      if (_doesExist) {
-        Member _member = listOfMembers[_index]; 
-        (_uniqueId, _userid) = _member.getKeyData();
-      }  
+    //   if (_doesExist) {
+    //     Member _member = listOfMembers[_index]; 
+    //     (_uniqueId, _userid) = _member.getKeyData();
+    //   }  
 
-    } // getKeyData_usingUniqueID()
+    // } // getKeyData_usingUniqueID()
 
-    function setKeyData_usingUniqueID(uint _uniqueId, address _userid) public  {
+    // function setKeyData_usingUniqueID(uint _uniqueId, address _userid) public  {
       
-      bool _doesExist;
-      uint _index;
-      (_doesExist, _index) = getMemberIndex_usingUniqueID(_uniqueId);
+    //   bool _doesExist;
+    //   uint _index;
+    //   (_doesExist, _index) = getMemberIndex_usingUniqueID(_uniqueId);
 
-      if (_doesExist) {
-        Member _member = listOfMembers[_index]; 
-        _member.setKeyData(_userid);
-      }  
+    //   if (_doesExist) {
+    //     Member _member = listOfMembers[_index]; 
+    //     _member.setKeyData(_userid);
+    //   }  
 
-    } // setKeyData_usingUniqueID()
+    // } // setKeyData_usingUniqueID()
 
-    function getRequirement_forContributionAsset_usingUniqueID(uint _uniqueId) public view
-      returns (bool _doesExist, string memory _Name, uint _Amount, address _walletAddress ) {
+    // function getRequirement_forContributionAsset_usingUniqueID(uint _uniqueId) public view
+    //   returns (bool _doesExist, string memory _Name, uint _Amount, address _walletAddress ) {
       
-      uint _index;
-      (_doesExist, _index) = getMemberIndex_usingUniqueID(_uniqueId);
+    //   uint _index;
+    //   (_doesExist, _index) = getMemberIndex_usingUniqueID(_uniqueId);
 
-      if (_doesExist) {
-        Member _member = listOfMembers[_index]; 
-        (_Name, _Amount, _walletAddress) = _member.getRequirement_forContributionAsset();
-      }  
-    } // getRequirement_forContributionAsset_usingUniqueID()
+    //   if (_doesExist) {
+    //     Member _member = listOfMembers[_index]; 
+    //     (_Name, _Amount, _walletAddress) = _member.getRequirement_forContributionAsset();
+    //   }  
+    // } // getRequirement_forContributionAsset_usingUniqueID()
 
-    function setRequirement_forContributionAsset_usingUniqueID(uint _uniqueId, string memory _Name, uint _Amount, address _walletAddress) 
-      public {
+    // function setRequirement_forContributionAsset_usingUniqueID(uint _uniqueId, string memory _Name, uint _Amount, address _walletAddress) 
+    //   public {
 
-      bool _doesExist;
-      uint _index;
-      (_doesExist, _index) = getMemberIndex_usingUniqueID(_uniqueId);
+    //   bool _doesExist;
+    //   uint _index;
+    //   (_doesExist, _index) = getMemberIndex_usingUniqueID(_uniqueId);
 
-      if (_doesExist) {
-        Member _member = listOfMembers[_index]; 
-        _member.setRequirement_forContributionAsset(_Name, _Amount,  _walletAddress);
-      }  
+    //   if (_doesExist) {
+    //     Member _member = listOfMembers[_index]; 
+    //     _member.setRequirement_forContributionAsset(_Name, _Amount,  _walletAddress);
+    //   }  
 
-    } // setRequirement_forContributionAsset_usingUniqueID()
-
+    // } // setRequirement_forContributionAsset_usingUniqueID()
 
 
     //----------------------------------
@@ -1041,56 +1081,73 @@ contract Cycle{
     //----------------------------------
     // Type definitions
     //----------------------------------
-    enum CycleStatus {initialising,allocateWinner,concluded} 
+    enum CycleStatus {initialising,waitForInterval,allocateWinner,payoutWinner,concluded} 
     //----------------------------------
     // Data
     //----------------------------------
     uint private id;  // unique Identification for each Cycle.
     
-    Pool private parentPool;
     MembersList private poolMembersList;
 
     uint cycleNo; // eg 1/10,2/10 etc
 
-    Member WinningMember; // The member that won this round/cycle
+    Member winningMember; // The member that won this round/cycle
 
-    CycleStatus cycleStatus; // (initialising,allocateWinner,concluded)  
+    CycleStatus cycleStatus; // (initialising,waitForInterval,allocateWinner,payoutWinner,concluded)  
 
+    uint256 startedDate; // The date that this cycle started.
+                         // This date will be used with the cycle intercal
+                         // period to know when the cycle has ompleted.
     //----------------------------------
     // Modifiers
     //----------------------------------
     modifier onlyWhenInitialising() {
         require(
             cycleStatus == CycleStatus.initialising,
-            "This task can only be done when Initialising this Pool Cycle."
+            "C01" //"This task can only be done when Initialising this Pool Cycle."
         );
         _;
     } // onlyWhenInitialising()
 
-    modifier onlyWhenAllocatingWinnerForCycle() {
+    modifier onlyWhenWaitingForAnIntervalToComplete() {
         require(
-            cycleStatus == CycleStatus.allocateWinner,
-            "This task can only be done when allocate Winner for this Pool Cycle."
+            cycleStatus == CycleStatus.waitForInterval,
+            "C02" //"This task can only be done while waiting for this Pool Cycle interval to complete."
         );
         _;
-    } // onlyWhenAllocatingWinnerForCycle()
+    } // onlyWhenWaitingForAnIntervalToComplete()
+
+    modifier onlyWhenAllocatingAWinner() {
+        require(
+            cycleStatus == CycleStatus.allocateWinner,
+            "C03" //"This task can only be done when allocate Winner for this Pool Cycle."
+        );
+        _;
+    } // onlyWhenAllocatingAWinner()
+
+    modifier onlyWhenPayingoutWinner() {
+        require(
+            cycleStatus == CycleStatus.payoutWinner,
+            "C04" //"This task can only be done when paying out the Winner for this Pool Cycle."
+        );
+        _;
+    } // onlyWhenPayingoutWinner()
 
     modifier onlyWhenThePoolCycleHasConculded() {
         require(
             cycleStatus == CycleStatus.concluded,
-            "This task can only be done when the Pool Cycle has Concluded."
+            "C05" //"This task can only be done when the Pool Cycle has Concluded."
         );
         _;
     } // onlyWhenThePoolCycleHasConculded()
     //----------------------------------
     // Functions
     //----------------------------------
-    constructor(uint256 _uniqueid, uint _cycleNo, Pool _parentPool, MembersList _poolMembersList) {
+    constructor(uint256 _uniqueid, uint _cycleNo, MembersList _poolMembersList) {
 
       id  = _uniqueid ;
       cycleNo = _cycleNo;
 
-      parentPool = _parentPool;
       poolMembersList = _poolMembersList;
 
       cycleStatus = CycleStatus.initialising; 
@@ -1098,20 +1155,82 @@ contract Cycle{
     //----------------------------------
     // Helper Functions
     //----------------------------------
-    function setWinningPoolMember(Member _member) public  {
-      WinningMember = _member; 
+    function getCycleStatus_asString() private view 
+      returns(string memory _cycleStatusText) {
+
+      if (cycleStatus == CycleStatus.initialising) {
+         // initialising
+         _cycleStatusText = "initialising";
+      }
+      else if (cycleStatus == CycleStatus.waitForInterval) {
+         // waiting for the interval to complete
+         _cycleStatusText = "waitForInterval";
+      }
+      else if (cycleStatus == CycleStatus.allocateWinner) {
+         // Ready to Run
+         _cycleStatusText = "allocateWinner";
+      }
+      else if (cycleStatus == CycleStatus.payoutWinner) {
+         // running
+         _cycleStatusText = "payoutWinner";
+      }
+      else {
+         // concluded 
+         _cycleStatusText = "concluded";
+      }
+      
+    } // getCycleStatus_asString()
+
+    function checkInitComplete() public onlyWhenInitialising {
+      // Check whatever needs be be cheched during. 
+
+      // set the start date.
+      startedDate = block.timestamp;
+      
+      // move to next status
+      cycleStatus == CycleStatus.waitForInterval; 
+
+    } // checkInitComplete()
+
+    function setIntervalComplete() public view onlyWhenWaitingForAnIntervalToComplete {
+      // the interval duration has completed 
+
+      // move to next status
+      cycleStatus == CycleStatus.allocateWinner; 
+    } // setIntervalComplete()
+
+    function setWinningPoolMember(Member _member) public onlyWhenAllocatingAWinner {
+      // We now have a winner...yay
+      winningMember = _member;
+
+      // move to next status
+      cycleStatus == CycleStatus.payoutWinner; 
     } // setWinningPoolMember()
+
+    function payoutWinningPoolMember(uint _payoutAmount) public onlyWhenPayingoutWinner {
+      // this is where the pooled funds get moved 
+      // into the winners payout address.
+      winningMember.depositCycleWinningAmount(_payoutAmount);
+
+      // move to next status
+      cycleStatus == CycleStatus.concluded; 
+    } // setWinningPoolMember()
+
+    function getCycleStartedDate() public view returns(uint256) {
+       return startedDate;
+    } // getCycleStartedDate()
 
     //----------------------------------
     // GUI Functions
     //----------------------------------
-    function getCycleNo() public view returns(uint256) {
+    function getCycleNo() public view returns(uint) {
        return cycleNo;
     } // getCycleNo()
 
     function getCycle() public view returns(Cycle) {
        return this;
     } // getCycle()
+   
     //----------------------------------
     // External Functions
     //----------------------------------
@@ -1122,20 +1241,33 @@ contract Cycle{
 
     } // isPoolCycleStatus_initialising()
 
-    function isPooCycle_allocateWinner() public view
+    function isPoolCycleStatus_waitForInterval() public view
+      returns(bool _value) {
+      
+      _value = (cycleStatus == CycleStatus.waitForInterval);
+
+    } // isPoolCycleStatus_waitForInterval()
+
+    function isPoolCycleStatus_allocateWinner() public view
       returns(bool _value) {
       
       _value = (cycleStatus == CycleStatus.allocateWinner);
 
-    } // isPooCycle_allocateWinner()
-  
-    function isPooCycle_concluded() public view
+    } // isPoolCycleStatus_allocateWinner()
+
+    function isPoolCycleStatus_payoutWinner() public view
+      returns(bool _value) {
+      
+      _value = (cycleStatus == CycleStatus.payoutWinner);
+
+    } // isPoolCycleStatus_payoutWinner()
+
+    function isPoolCycleStatus_concluded() public view
       returns(bool _value) {
       
       _value = (cycleStatus == CycleStatus.concluded);
 
-    } // isPooCycle_concluded()
-
+    } // isPoolCycleStatus_concluded()
 
 } //contract Cycle 
 
@@ -1143,36 +1275,93 @@ contract CyclesList{
     //----------------------------------
     // Type definitions
     //----------------------------------
+    enum CycleListStatus {initialising,running,concluded} 
+
+    enum CycleIntervalType {day,week,month} 
     //----------------------------------
     // Data
     //----------------------------------
-    Pool public parentPool;
+    PoolRequirements poolRequirements;
     MembersList public poolMembersList;
 
     Cycle[] public listOfCycles;
 
+    CycleListStatus cycleListStatus; // (initialising,running,concluded)
+
+    uint cycleInterval = 1;  // Total number of cycle intervals 
+                             // measured in days (week,month?) 
+                             // (days between cycles).    
+    CycleIntervalType cycleIntervalType; // (day,week,month)
+
     // CycleList working data
     uint256 uniqueID = 0; // Source of the auto generated id
 
-    Member[] public listOfEligiblePoolMembers;
-    Member[] public listOfWinningPoolMembers;
+    uint256 cycles_StartDate;   // Timestamp that the cycles started.
+
+    Member[] private listOfEligiblePoolMembers;
+    Member[] private listOfWinningPoolMembers;
     //----------------------------------
     // Modifiers
     //----------------------------------
+    modifier onlyWhenInitialising() {
+        require(
+            cycleListStatus == CycleListStatus.initialising,
+            "CL01" //"This task can only be done when Initialising this Pool Cycle List."
+        );
+        _;
+    } // onlyWhenInitialising()
+
+    modifier onlyWhenCylesAreRunning() {
+        require(
+            cycleListStatus == CycleListStatus.running,
+            "CL02" //"This task can only be done when Running this Pool Cycle List."
+        );
+        _;
+    } // onlyWhenCylesAreRunning()
+
+    modifier onlyWhenCyclesHaveConculded() {
+        require(
+            cycleListStatus == CycleListStatus.concluded,
+            "CL03" //"This task can only be done when the Pool Cycle List has Concluded."
+        );
+        _;
+    } // onlyWhenCyclesHaveConculded()
     //----------------------------------
     // Functions
     //----------------------------------
-    constructor(Pool _parentPool, MembersList _poolMembersList) {
+    constructor(PoolRequirements _poolRequirements, MembersList _poolMembersList) {
 
-      parentPool = _parentPool;
+      poolRequirements = _poolRequirements;
       poolMembersList = _poolMembersList;
 
       initialiseAvailiableWinningMembersArray();
+
+      cycleListStatus = CycleListStatus.initialising; // (initialising,running,concluded)
+
+      cycleIntervalType = CycleIntervalType.day; // (day,week,month)
 
     } // constructor()
     //----------------------------------
     // Helper Functions
     //----------------------------------
+    function getCycleListStatus_asString() private view 
+      returns(string memory _cycleListStatusText) {
+
+      if (cycleListStatus == CycleListStatus.initialising) {
+         // initialising
+         _cycleListStatusText = "initialising";
+      }
+      else if (cycleListStatus == CycleListStatus.running) {
+         // running
+         _cycleListStatusText = "running";
+      }
+      else {
+         // concluded 
+         _cycleListStatusText = "concluded";
+      }
+      
+    } // getCycleListStatus_asString()
+
     function getNextUniqueId() public returns(uint256) {
        uniqueID++; 
        return uniqueID;
@@ -1225,50 +1414,181 @@ contract CyclesList{
        } // for loop 
     } // removeMemberFromAvailiableWinningMembersArray()
 
-    function selectAWinningMember_forThisCycle(Cycle _cycle) public returns(Member _winningMember) {
+    function selectAWinningMember_forThisCycle(Cycle _cycle) public onlyWhenCylesAreRunning
+      returns(Member _winningMember) {
       // for testing the initial phase we will do Random
-      //todo uint poolEligibleWinnersSize = listOfEligiblePoolMembers.length;
-      //todo require(poolEligibleWinnersSize > 0);
+      uint poolofEligibleWinners_Size = listOfEligiblePoolMembers.length;
+      require(poolofEligibleWinners_Size > 0, "The list of eligible winners is empy!");
 
       // find the ramdom winner
-      //todo string memory _parm1 = Pool_Utils.integerToString(block.difficulty);
-      //todo string memory _parm2 = Pool_Utils.integerToString(block.timestamp);
-      //todo uint randomIndex = uint(keccak256(block.difficulty, block.timestamp)) % poolEligibleWinnersSize;
-      
-      uint randomIndex = 0; // todo      
+      uint sourceOfRandomness = uint(keccak256(abi.encodePacked(
+            blockhash(block.number - 1),
+            block.timestamp)));
+
+      uint randomIndex = (sourceOfRandomness % poolofEligibleWinners_Size);      
+
       _winningMember = listOfEligiblePoolMembers[randomIndex];
 
       _cycle.setWinningPoolMember(_winningMember);
-
+      
       // Remove from the eligible Winner list
-
+      removeMemberFromAvailiableWinningMembersArray(_winningMember);
       // Add to the already won members list
+      listOfWinningPoolMembers.push(_winningMember);
+     
+      return _winningMember;
 
-       //return cycleNo;
     } // selectAWinningMember_forThisCycle()
 
+    function processCycles() public onlyWhenCylesAreRunning {
+      // This will be called by some looping mechanism of a parent contract
+      // initialising ==> waitForInterval ==> allocateWinner ==> payoutWinner ==> concluded         
+      uint currentNoOfCycles = listOfCycles.length; 
+      uint maxNoOfCycles = getMaxNoOfCycles();
 
+      if (currentNoOfCycles < 1) {
+        // This starts the cycles....
+        
+        if (maxNoOfCycles > 0) {
+          // Set the start date for the cycles
+          cycles_StartDate = block.timestamp;
+
+          // then to start the first cycle cycle
+          addNewCycle();
+        }
+      }
+
+      Cycle _thisCycle;
+      uint noOfConcludedCycles = 0;
+
+      for (uint i = 0; i < currentNoOfCycles; i++) {
+        _thisCycle = listOfCycles[i];
+
+         if (_thisCycle.isPoolCycleStatus_concluded()) {
+           // counting the number of concluded cycles for later use
+           noOfConcludedCycles++;
+         }
+         else if (_thisCycle.isPoolCycleStatus_payoutWinner()) {
+           // need to payout the winning member of this cycle
+           uint _fixedAmountToExtract = poolRequirements.getFixedContributionAmount();
+           uint _totalContributions = poolMembersList.extractAllMemberContributions(_fixedAmountToExtract);
+           _thisCycle.payoutWinningPoolMember(_totalContributions);
+         }
+         else if (_thisCycle.isPoolCycleStatus_allocateWinner()) {
+           // looking for a winning member of this cycle
+           selectAWinningMember_forThisCycle(_thisCycle);
+         }
+         else if (_thisCycle.isPoolCycleStatus_waitForInterval()) {
+           // this cycle is still waiting for the interval period to complete
+           uint256 currentDate = block.timestamp;
+           uint256 startedDate = _thisCycle.getCycleStartedDate();
+           uint256 diff_inDays = (currentDate - startedDate) / 60 / 60 / 24; // in days           
+           
+           uint intervalPeriod_inDays = getIntervalPeriod_asDays(); 
+
+           if (diff_inDays >= intervalPeriod_inDays) {
+             // cycle interval now complete
+             _thisCycle.setIntervalComplete();
+           }
+         }
+         else if (_thisCycle.isPoolCycleStatus_initialising()) {
+           // verify that initialisation is complete
+           _thisCycle.checkInitComplete();
+         }
+      } // for loop 
+
+      if (noOfConcludedCycles >= maxNoOfCycles) {
+        // This ends the cycles.
+        // all cycles have completed, the pool is also now complete
+        cycleListStatus = CycleListStatus.concluded;
+      }
+      else {
+        // noOfConcludedCycles < maxNoOfCycles
+        if (noOfConcludedCycles == currentNoOfCycles) {
+          // All current cycles have concluded
+          // its time to add another cycle 
+          addNewCycle();
+        }
+      }
+    } // processCycles()
+
+    function getIntervalPeriod_asDays() public view returns(uint) {
+      // get the interval period in days
+      require(cycleInterval > 0, "Cycle Interval must be greater than zero");
+
+      //cycleInterval
+      uint intervalPeriodInDays; 
+
+      if (cycleIntervalType == CycleIntervalType.day) {
+        // only a day
+        intervalPeriodInDays = 1; 
+      }
+      else if (cycleIntervalType == CycleIntervalType.week) {
+        // only a week
+      intervalPeriodInDays = 1*7; //todo
+      }
+      else if (cycleIntervalType == CycleIntervalType.month) { 
+        // only a month
+        intervalPeriodInDays = 1*28; //todo
+      }  
+ 
+      return (cycleInterval*intervalPeriodInDays); 
+
+    } // getIntervalPeriod_asDays
+
+    function getMaxNoOfCycles() public view returns(uint) {
+       return poolMembersList.getLength();
+    } // getMaxNoOfCycles()
 
     //----------------------------------
     // GUI Functions
     //----------------------------------
-    function addNewCycle() public 
+    function addNewCycle() public onlyWhenCylesAreRunning
       returns (uint _uniqueId, uint _index){
          _uniqueId = getNextUniqueId();
 
          uint _cycleNo = listOfCycles.length;
 
-         Cycle _NewCycle = new Cycle(_uniqueId, _cycleNo, parentPool, poolMembersList);
+         Cycle _NewCycle = new Cycle(_uniqueId, _cycleNo, poolMembersList);
          listOfCycles.push(_NewCycle);
 
          _index = listOfCycles.length -1;
-
     } // addNewCycle() 
+
+    function getCurrentCycleNo() public view returns(uint) {
+       return listOfCycles.length;
+    } // getCurrentCycleNo()
 
     //----------------------------------
     // External Functions
     //----------------------------------
+    function isPoolCycleListStatus_initialising() public view
+      returns(bool _value) {
+      
+      _value = (cycleListStatus == CycleListStatus.initialising);
 
+    } // isPoolCycleListStatus_initialising()
+
+    function isPoolCycleListStatus_running() public view
+      returns(bool _value) {
+      
+      _value = (cycleListStatus == CycleListStatus.running);
+
+    } // isPoolCycleListStatus_running()
+
+    function isPoolCycleListStatus_concluded() public view
+      returns(bool _value) {
+      
+      _value = (cycleListStatus == CycleListStatus.concluded);
+
+    } // isPoolCycleListStatus_concluded()
+
+    function setCycleListStatusTo_running() public onlyWhenInitialising {
+      // To be set by the "pool" when the 
+      // initial pool configuration is complete
+      // and all pool members have been added.
+      cycleListStatus = CycleListStatus.running;
+    } // setCycleListStatusTo_running()
 
 } //contract CyclesList 
 
