@@ -1,0 +1,87 @@
+body{
+    background-color: #040319;
+    color: #ffffff;
+    display: block;
+    font-family: poppins;
+    font-size: 14px;
+    font-weight: normal;
+    box-sizing: border-box;
+}
+h1{
+    font-size: 21.33px;
+    font-weight: normal;
+}
+btn.getstarted{
+    background-color: #F936B4;
+}
+
+
+
+
+div.aboutwrapper{
+    background-color: #000000;
+    border: #ffffff27 1px solid;
+    float: left;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    align-content: center;
+
+}
+
+[class *="aboutcontent"]{
+    background-color: #ffffff;
+}
+
+img.aboutimage{
+    background-color: #000000;
+}
+
+p.aboutcontent{
+    color: #000000;
+    font-family: Arial;
+    font-size: 9px;
+    margin-left: 20px;
+}
+
+span.aboutcontent{
+    color: #7F7F7F;
+    font: Arial 9px lighter;
+}
+
+div.aboutcontent1{
+    float: left;
+    display: grid;
+    grid-column: 1/ span 1;
+    grid-row: 1/ span 1;
+}
+
+div.aboutcontent2{
+    float: left;
+    display: grid;
+    grid-column: 2/ span 1;
+    grid-row: 1/ span 1;
+}
+
+div.aboutcontent3{
+    float: left;
+    display: grid;
+    grid-column: 1/ span 1;
+    grid-row: 2/ span 1;
+}
+
+div.aboutcontent4{
+    float: left;
+    display: grid;
+    grid-column: 2/ span1;
+    grid-row: 2/ span 1;
+}
+
+div.aboutwrapper{
+    background-color: #000000; 
+}
+
+div.aboutwrapper >div> p > span{
+    color: #CCCCCC;
+    font-weight: lighter;
+}
