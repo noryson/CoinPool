@@ -73,7 +73,7 @@ div.aboutcontent3{
 div.aboutcontent4{
     float: left;
     display: grid;
-    grid-column: 2/ span1;
+    grid-column: 2/ span 1;
     grid-row: 2/ span 1;
 }
 
@@ -156,4 +156,156 @@ h2 {
     width: 33px;
     height: auto;
     opacity: 70%;
+}
+
+/* Desktop View*/
+@media only screen  and (min-width:768px) {
+    h1{
+        font-size: 21.33px;
+        font-weight: normal;
+    }
+    btn.getstarted{
+        background-color: #F936B4;
+    }
+    
+    
+    div.aboutwrapper{
+        background-color: #000000;
+        border: #ffffff27 1px solid;
+        float: left;
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto;
+        align-content: center;
+    
+    }
+    
+    [class *="aboutcontent"]{
+        background-color: #000000;
+    }
+    
+    img.aboutimage{
+        background-color: #000000;
+        width: fit-content;
+        
+    }
+    
+    p.aboutcontent{
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #000000;
+        background-clip: border-box;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+    
+    p.aboutcontent{
+        color: #ffffff;
+        font-family: Arial;
+        font-size: 20px;
+        margin-left: 20px;
+    }
+    
+    div.aboutcontent1{
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1.25rem;
+    }
+    
+    div.aboutcontent2{
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1.25rem;
+    }
+    
+    div.aboutcontent3{
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1.25rem;
+    }
+    
+    div.aboutcontent4{
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1.25rem;
+    }
+    
+    div.aboutwrapper{
+        background-color: #000000; 
+    }
+    
+    
+    
+    /* Market Page */
+    #background {
+        background-color: #ffffff;
+    }
+    
+    #container, header {
+        width: 95%;
+        margin: auto;
+        overflow: hidden;
+    }
+    
+    #top {
+        font-size: 20px;
+        color:#000000;
+    }
+    
+    .box-container {
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0 10px 0;
+    }
+    
+    #faded {
+        color: #CCCCCC;
+        font-size: 12px;
+        font-weight: lighter;
+    }
+    
+    h2 {
+        color: #000000;
+        font-size: 16px;
+    }
+    
+    .unit {
+        color:#7F7F7F;
+        font-size: 11px;
+        font-weight: lighter;
+    }
+    
+    .price {
+        color: #3cb371;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    
+    .changes {
+        color: #ffffff;
+        background-color: #3cb371;
+        padding: 10px;
+    }
+    
+    
+    .footer{
+        display: flex;
+        background-color: #ffffff;
+        width: 100%;
+        justify-content: space-around;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    
+    }
+    
+    .footer > a >img{
+        width: 33px;
+        height: auto;
+        opacity: 70%;
+    }
 }
