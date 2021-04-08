@@ -85,3 +85,75 @@ div.aboutwrapper >div> p > span{
     color: #CCCCCC;
     font-weight: lighter;
 }
+
+
+/* Market Page */
+#background {
+    background-color: #ffffff;
+}
+
+#container, header {
+    width: 95%;
+    margin: auto;
+    overflow: hidden;
+}
+
+#top {
+    font-size: 20px;
+    color:#000000;
+}
+
+.box-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0 10px 0;
+}
+
+#faded {
+    color: #CCCCCC;
+    font-size: 12px;
+    font-weight: lighter;
+}
+
+h2 {
+    color: #000000;
+    font-size: 16px;
+}
+
+.unit {
+    color:#7F7F7F;
+    font-size: 11px;
+    font-weight: lighter;
+}
+
+.price {
+    color: #3cb371;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.changes {
+    color: #ffffff;
+    background-color: #3cb371;
+    padding: 10px;
+}
+
+
+
+
+
+.footer{
+    display: flex;
+    background-color: #ffffff;
+    width: 100%;
+    justify-content: space-around;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+}
+
+.footer > a >img{
+    width: 33px;
+    height: auto;
+    opacity: 70%;
+}
