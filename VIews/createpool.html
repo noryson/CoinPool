@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Refresh" content="30">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CoinPool - Create Pool</title>
@@ -11,9 +10,40 @@
 </head>
 
 <body>
+		
 	
-
-	
+<!--Create Pool Section Starts-->	
+<div class="container col-xl-6 col-lg-6 col-md-9 col-sm-9 col-12">
+  <form>
+	  <div class="form-group">
+	    <label for="poolName">Pool Name</label>
+	    <input type="text" class="form-control" id="poolName" placeholder="Enter pool name">
+	    <small id="emailHelp1" class="form-text text-muted">We'll never share your email with anyone else.</small> 
+	  </div>
+	  <div class="form-group">
+	    <label for="poolAsset">Pool Asset</label><br>
+	    <div class="btn-group bg-light">
+		    <button type="button" class="btn btn-lg">Select Asset</button>
+		    <button type="button" class="btn btn-lg dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="sr-only">Toggle Dropdown</span> </button>
+		    <div class="dropdown-menu">
+		      <h6 class="dropdown-header">AVAILABLE ASSETS</h6>
+		      <a class="dropdown-item" href="#">BNB</a> <a class="dropdown-item" href="#" >ETH</a> <a class="dropdown-item" href="#">cToken</a>
+		      <div class="dropdown-divider"></div>
+			</div>
+	    </div>
+      </div>
+	  <div class="form-group">
+	    <label for="amount">Amount</label>
+	    <input type="number" class="form-control" id="amount" placeholder="Amount">
+      </div>
+	  <!--<div class="form-check">
+	    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+	    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+    </div>-->
+	  <button type="submit" class="btn btn-main">Create</button>
+  </form>
+</div>
+<!--Create Pool Section Ends-->	
 	
 <!--Footer section starts-->
 <footer>
