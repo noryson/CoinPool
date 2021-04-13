@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinPool - Create Pool</title>
+<link href="../css/bootstrap-4.3.1.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" media="screen" href="../css/main.css">
+</head>
+
+<body style="font-family: poppins; font-weight: normal">
+		
+	
+<!--Create Pool Section Starts-->	
+<div class="container col-xl-6 col-lg-6 col-md-9 col-sm-9 col-12 mt-5">
+  <div class="row">
+	  <div class="col-xl-4 col-lg-4 col-md-8 col-sm-8 col-8 mx-auto text-center mb-3"><a class="navbar-brand text-light" href="index.html" style="font-family: poppins; font-weight: bold"><img src="../Includes/icons/pool.png" width="24px;"><span>COIN</span>POOL</a></div>
+  </div>
+<form action="">
+	  <div class="form-group">
+	    <label for="poolName">Pool Name</label>
+	    <input type="text" class="form-control" id="poolName" name="poolName" placeholder="Enter pool name">
+	  </div>
+	  <div class="form-group">
+	    <label for="asset">Select Asset</label>
+      <select class="form-control" id="asset" name="asset">
+        <option>BNB</option>
+        <option>ETH</option>
+        <option>cToken</option>
+      </select>
+      </div>
+	  <div class="form-group">
+	    <label for="amount">Amount</label>
+	    <input type="number" class="form-control" id="amount" name="amount" placeholder="Amount">
+      </div>
+	  <!--<div class="form-check">
+	    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+	    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+    </div>-->
+	  <button type="submit" class="btn btn-main">Create</button>
+  </form>
+</div>
+<!--Create Pool Section Ends-->	
+	
+<!--Footer section starts-->
+<footer>
+  <div class="footer fixed-bottom">
+  <a href="index.html"><img src="../Includes/icons/home.png" alt="home" class=""></a>
+  <a href="vault.html"><img src="../Includes/icons/tf.png" alt="transfer" class=""></a>
+  <a href="pool.html"><img src="../Includes/icons/pool.png" alt="pool" class=""></a>
+  <a href="market.html"><img src="../Includes/icons/chart.png" alt="market" class=""></a>
+  <a href="JavaScript:void(0)"><img src="../Includes/icons/set.png" alt="settings" class=""></a>
+  </div>
+</footer>
+<!--Foooter section ends-->
+	
+<script src="../js/jquery-3.3.1.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap-4.3.1.js"></script>
+</body>
+</html>
