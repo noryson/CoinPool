@@ -24,104 +24,13 @@
 <!--navigation bar ends-->
     </header>
     <!---Header section ends here-->
-    <div id="background">
-        <div id="container">
-            <div>
-                <h3 id="top">Top Gainers</h3>
-            </div>
-            <section id="markets">
-                <div id="faded" class="box-container">
-                    <h3>Pair</h3>
-                    <h3>Last Price</h3>
-                    <h3>24 Chng%</h3>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>FILUP<span class="unit">/USDT</span></h2>
-                    </div>
-                    <p class="price">79.140</p>
-                    <p class="changes">+57.35%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>TRXUP<span class="unit">/USDT</span></h2>
-                    </div>
-                    <p class="price">10.634</p>
-                    <p class="changes">+56.36%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>FIL<span class="unit">/USDT</span></h2>
-                    </div>
-                    <p class="price">216.9196</p>
-                    <p class="changes">+40.08%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>FIL<span class="unit">/BUSD</span></h2>
-                    </div>
-                    <p class="price">216.6264</p>
-                    <p class="changes">+39.72%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>FIL<span class="unit">/BTC</span></h2>
-                    </div>
-                    <p class="price">0.0036937</p>
-                    <p class="changes">+38.48%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>WIN<span class="unit">/USDC</span></h2>
-                    </div>
-                    <p class="price">0.0005912</p>
-                    <p class="changes">+37.39%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>WIN<span class="unit">/USDT</span></h2>
-
-                    </div>
-                    <p class="price">0.00059363</p>
-                    <p class="changes">+37.27%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>EOSUP<span class="unit">/USDT</span></h2>
-
-                    </div>
-                    <p class="price">2.697</p>
-                    <p class="changes">+36.76%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>SUN<span class="unit">/USDT</span></h2>
-                    </div>
-                    <p class="price">39.877</p>
-                    <p class="changes">+34.33%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>SUN<span class="unit">/BTC</span></h2>
-                    </div>
-                    <p class="price">0.000682</p>
-                    <p class="changes">+33.46%</p>
-                </div>
-            </section>
-            </div>
-        </div>
-    </div>
-
+   
+<!--Coin Markets Update Starts-->
+<div class="container col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-4 mb-4">
+<coingecko-coin-list-widget  coin-ids="ethereum,binance-bitcoin,aave,fil12,erc20,uniswap,xrp-bep2,venus-dot,dai,tron,litecoin,sushi,solana,algovest,iq-cash,the-sandbox,bitcoin,aapl,metahash,4artechnologies,eos,eos-eth,eos-btc,eosblack,trust,yearn-classic-finance,xend-finance,bubble-network" currency="usd" locale="en"></coingecko-coin-list-widget>
+	</div>
+<!--Coin Market Update Ends-->	
+	
     <!--Footer section starts-->
 <footer>
     <div class="footer fixed-bottom">
@@ -137,5 +46,6 @@
 <script src="../js/jquery-3.3.1.min.js"></script>
 <script src="../js/popper.min.js"></script>
 <script src="../js/bootstrap-4.3.1.js"></script>
+<script src="https://widgets.coingecko.com/coingecko-coin-list-widget.js"></script>
 </body>
 </html>
