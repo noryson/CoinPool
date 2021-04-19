@@ -7,11 +7,14 @@
 <title>Homepage</title>
 <link href="../css/bootstrap-4.3.1.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" media="screen" href="../css/main.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
+<script src="../js/script.js"></script>
 </head>
 
-<body class="bg-main" style="box-sizing: border-box; padding-top: 50px; background-color: #040319; color: #ffffff; font-family: poppins; font-weight: normal;">
+<body class="bg-main" style="box-sizing: border-box; padding-top: 50px; background-color: #040319; color: #ffffff; font-family: Arial, Helvetica, sans-serif; font-weight: bold;">
 	<!--Navigation Bar Starts-->
-<nav class="navbar fixed-top navbar-expand-lg bg-main navbar-dark col-xl-8 col-lg-8 mx-auto"><a class="navbar-brand light" href="JavaScript:void(0)" style="font-family: poppins; font-weight: bold"><img src="../Includes/icons/pool.png" width="24px;"><span>COIN</span>POOL</a>
+<nav class="navbar fixed-top navbar-expand-lg bg-main navbar-dark col-xl-8 col-lg-8 mx-auto"><a class="navbar-brand light" href="JavaScript:void(0)" style="font-family: Arial, Helvetica, sans-serif; font-weight: bold"><img src="../Includes/icons/pool.png" width="24px;"><span>COIN</span>POOL</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
   <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent1">
     <ul class="navbar-nav">
@@ -22,77 +25,70 @@
 </nav>&nbsp;
 <!--navigation bar ends-->
 <!--Get Strated Starts-->
-<div class="jumbotron bg-main col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 mx-auto">
-<p class="lead"> <a class="btn btn-main btn-lg" href="pool.html" role="button">Get Started <img src="../Includes/icons/arrow.png" alt="arrow"></a><img src="../Includes/icons/pattern.png" class="float-right img-fluid" width="200px" height="200px"> </p>
-<h2 style="color: #ffffff; font-family: poppins; font-size: 21.33px;">The Evolving <br> Defi Crowd Lending <br>Protocol on BSC </h2>
+<div class="jumbotron bg-main col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 mx-auto clearfix">
+<p class="lead"> <a class="btn btn-main btn-lg" href="pool.html" role="button">Get Started <img src="../Includes/icons/arrow.png" alt="arrow"></a><img src="../Includes/icons/pattern.png" class="float-right img-fluid" width="300px" height="300px"> 
+<button class="btn btn-main btn-lg ml-3" id="connectAccount">Connect Account</button>
+</p>
+
+<h2 style="color: #ffffff; font-family: Arial, Helvetica, sans-serif; font-size: 21.33px;">The Evolving <br> Defi Crowd Lending <br>Protocol on Binance<br> Smart Chain </h2>
+
 </div>
 	<!-- Get Started Ends-->
 	<!-- Browse Pool Starts-->
-<div class="container col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
-	<a href="pool.html"><h6 class="mb-0 text-light">Browse <span>Pools</span> <img src="../Includes/icons/arrow.png" alt="arrow"></h6></a><br>
-  <div class="row mt-0">
+<div class="container col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8 mx-auto">
+  <script> $(document).ready(function(){ $("#loadPendingPools").click(); });</script>
+  <span class="hidden" id="loadPendingPools"></span>
+  <h5 class="mt-5 inline">All pending pools</h5>
+	<a class="d-flex justify-content-end mr-2" href="pool.html"><h6 class="justify-content-right mb-0 text-light">Browse <span>Active Pools</span> <img src="../Includes/icons/arrow.png" alt="arrow"></h6></a><br>
+  
+  <div class="row mx-auto" id="pendingPools">
 	  
-    <div class="col-4 col-xs-12 col-sm-4 col-md-4 col-lg-12">
-<div class="card text-center col-md-4 col-lg-12 bg-dark">
-  <img src="../Includes/icons/shape.png" class="float-left mt-2" width="30" height="24">
-  <div class="card-body">
-          <h5 class="card-title">Pool: Amount</h5>
-</div>
-        <div class="card-footer text-muted"><img src="../Includes/icons/person.svg" alt="user"> 7/10  </div>
-    </div>
-    </div>
-    <div class="col-4 col-xs-12 col-sm-4 col-md-4 col-lg-12">
-      <div class="card text-center col-md-4 col-lg-12 bg-dark">
-		  <img src="../Includes/icons/shape.png" class="float-left mt-2" width="30" height="24">
-        <div class="card-body">
-          <h5 class="card-title">Pool: Amount</h5>
-</div>
-        <div class="card-footer text-muted"> <img src="../Includes/icons/person.svg" alt="user"> 7/10  </div>
-      </div>
-    </div>
-    <div class="col-4 col-xs-12 col-sm-4 col-md-4 col-lg-12">
-      <div class="card text-center col-md-4 col-lg-12 bg-dark">
-		  <img src="../Includes/icons/shape.png" class="float-left mt-2" width="30" height="24">
-        <div class="card-body">
-          <h5 class="card-title">Pool: Amount</h5>
-</div>
-        <div class="card-footer text-muted"><img src="../Includes/icons/person.svg" alt="user"> 7/10 </div>
-      </div>
-    &nbsp;</div>
-  </div>
+    <!-- <div class="col-4 col-lg-6">
+        <div class="card text-center bg-dark">
+          <img src="../Includes/icons/shape.png" class="float-left mt-2" width="15" height="12">
+          <div class="card-body p-0">
+                  <h6 class="card-title">Pool: Amount</h6>
+          </div>
+          <div class="card-footer p-0 text-muted"><img src="../Includes/icons/person.svg" alt="user"> 7/10  </div>
+        </div>
+    </div> -->
+    
+
 </div>
 	<!--Browsee Pools Ends-->
 
 <!--About features section-->
-
-<div class="container col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 mb-5 mx-auto">
-
+<div class="p-2 mt-5"></div>
+<div class="container col-12 my-5 mx-auto">
+  <h5>About features</h5>
   <div class="row justify-content-center">
-	  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6"><a href="about.html#startpool" title="How to start a pool"><img src="../Includes/icons/pool.png" class="img-fluid" alt="Placeholder image"></a>
-	    <div class="row bg-light text-dark">
+	  <div class="col"><a href="about.html#startpool" title="How to start a pool"><img src="../Includes/icons/pool.png" class="img-fluid" alt="Placeholder image"></a>
+	    <div class="bg-light text-dark">
 	      <div class="col-lg-12 col-md-12 col-sm-6 col-12 ml-4 font-weight-bold col-xl-11"><a href="about.html#startpool" class="text-dark"><p>How to start a pool <br><span>BSC AMC Team</span></p></a></div>
         </div>
 	  </div>
-	  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6"><a href="about.html#joinpool" title="How to join a pool"><img src="../Includes/icons/pool.png" class="img-fluid" alt="Placeholder image"></a>
-	    <div class="row bg-light text-dark">
+	  <div class="col"><a href="about.html#joinpool" title="How to join a pool"><img src="../Includes/icons/pool.png" class="img-fluid" alt="Placeholder image"></a>
+	    <div class="bg-light text-dark">
 	      <div class="col-lg-12 col-md-12 col-sm-6 col-12 ml-4 font-weight-bold col-xl-11 offset-xl-0"><a href="about.html#joinpool" class="text-dark"><p>How to join a pool <br><span>BSC AMC Team</span></p></a></div>
         </div>
 	  </div>
-	  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6"><a href="about.html#earntoken" title="How to earn cToken"><img src="../Includes/icons/pool.png" class="img-fluid" alt="Placeholder image"></a>
-	    <div class="row bg-light text-dark">
+	  <div class="col"><a href="about.html#earntoken" title="How to earn cToken"><img src="../Includes/icons/pool.png" class="img-fluid" alt="Placeholder image"></a>
+	    <div class="bg-light text-dark">
 	      <div class="col-lg-12 col-md-12 col-sm-6 col-12 ml-4 font-weight-bold col-xl-11"><a href="about.html#earntoken" class="text-dark"><p>How to earn cToken <br><span>BSC AMC Team</span></p></a></div>
         </div>
 	  </div>
-	  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6"><a href="about.html#usetoken" title="How to use cToken"><img src="../Includes/icons/pool.png" class="img-fluid" alt="Placeholder image"></a>
-	    <div class="row bg-light text-dark">
+	  <div class="col"><a href="about.html#usetoken" title="How to use cToken"><img src="../Includes/icons/pool.png" class="img-fluid" alt="Placeholder image"></a>
+	    <div class="bg-light text-dark">
 	      <div class="col-lg-12 col-md-12 col-sm-6 col-12 ml-4 font-weight-bold col-xl-11"><a href="about.html#usetoken" class="text-dark"><p>How to use cToken <br><span>BSC AMC Team</span></p></a></div>
       </div></div>
   </div>
 </div>
 <!--About features section ends-->
 
+<div class="my-5 py-1"></div>
+
 <!--Footer section starts-->
-<footer>
+<footer class="">
   <div class="footer fixed-bottom">
   <a href="JavaScript:void(0)"><img src="../Includes/icons/home.png" alt="home" class=""></a>
   <a href="vault.html"><img src="../Includes/icons/tf.png" alt="transfer" class=""></a>
