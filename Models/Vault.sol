@@ -3,7 +3,7 @@
 pragma solidity >=0.6.2 <0.9.0;
 
 import "../Interfaces/InterfaceERC20.sol";
-import "../Interfaces/InterfaceBEP20.sol";
+// import "../Interfaces/InterfaceBEP20.sol";
 import "./Utils.sol";
 
 contract Vault{
@@ -118,7 +118,7 @@ contract Vault{
         return accounts.length;
     }// getNo_ofAccounts()
     
-    function getAssetName() public returns(string memory){
+    function getAssetName() public view returns(string memory){
         return assetName;
     }
     
@@ -283,7 +283,7 @@ contract VaultMap{
         return getConnectedAccounts().length;
     }
     event D(uint256 value, string []);
-    function getAccountStatement(address _account) public returns(Utils.AccountSummary[] memory){
+    function getAccountStatement(address _account) public view returns(Utils.AccountSummary[] memory){
         Utils.AccountSummary[] memory summary = new Utils.AccountSummary[](getNo_ofVaults());
         for(uint i=0; i<getNo_ofVaults(); i++){
             Vault vault = getVault_withName(getVaultNames()[i]);

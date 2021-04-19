@@ -26,13 +26,13 @@ contract Pool {
     /*  @invariants: assets supported are BNB, Ether and Cryptonite */
     Pool_Utils.CryptoAsset private contributionAsset;
     Pool_Utils.CryptoAsset private stakingAsset;
-    uint private maxNoOfMembers;
-    uint private minNoOfMembers;
-    uint private numberOfCycles;  
-    uint private cycleInterval;  // Total number of cycles intervals measured in days (week,month?) (days between cycles).    
+    uint8 private maxNoOfMembers;
+    uint8 private minNoOfMembers;
+    uint8 private numberOfCycles;  
+    uint8 private cycleInterval;  // Total number of cycles intervals measured in days (week,month?) (days between cycles).    
     uint256 private cycleStartDate;  // Timestamp that the cycle started.
-    uint private currentCycleNo;
-    uint private currentNoOfMembers;
+    uint8 private currentCycleNo;
+    uint8 private currentNoOfMembers;
     PoolStatus private poolStatus;    // (initialising,addingmembers,readytorun, running,concluded)  
     
     MembersList private membersList;
@@ -77,7 +77,7 @@ contract Pool {
     //----------------------------------
     constructor(address _vaultAddress, address _owner, address _self, 
                 string memory _name, address _creator, string memory _poolAsset, uint _assetAmount, 
-                string memory _stakedAsset, uint _stakedAssetAmount, uint _maxNoOfMembers, uint _cycleInterval){
+                string memory _stakedAsset, uint _stakedAssetAmount, uint8 _maxNoOfMembers, uint8 _cycleInterval){
         
         
         vaultMap = VaultMap(_vaultAddress);
@@ -173,9 +173,9 @@ contract Pool {
 
 
     function getData_forMembers() public view
-      returns (uint _currentNoOfMembers) {
-      
-       _currentNoOfMembers = currentNoOfMembers;
+      returns (uint8 _maxNoOfMembers, uint8 _currentNoOfMembers) {
+      _maxNoOfMembers = maxNoOfMembers;
+      _currentNoOfMembers = uint8(membersList.getLength());
 
     } // getData_forMembers()
 
@@ -202,7 +202,7 @@ contract Pool {
         return cycleStartDate;
     }
     
-    function getCurrentCycleNo() public view returns(uint256){
+    function getCurrentCycleNo() public view returns(uint8){
         return currentCycleNo;
     }
     
@@ -345,8 +345,8 @@ contract PoolsList{
     } // constructor()
     
     function addNewPool(string memory _name, address _creator, string memory _poolAsset, 
-                        uint256 _assetAmount, string memory _stakedAsset, uint _maxNoOfMembers, 
-                        uint _cycleInterval) public returns (uint _id, uint256 _stakedAssetAmount){
+                        uint256 _assetAmount, string memory _stakedAsset, uint8 _maxNoOfMembers, 
+                        uint8 _cycleInterval) public returns (uint _id, uint256 _stakedAssetAmount){
         
         for(uint i=0; i<vaultMap.getNo_ofVaults(); i++){
             if(Utils.compareString(vaultMap.getVaultNames()[i], _poolAsset)){
