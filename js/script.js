@@ -3,28 +3,22 @@ $(document).ready(function(){
 var isConnected = false;
 var abi = [
 	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
 				"internalType": "uint256",
-				"name": "nows",
+				"name": "poolId",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "then",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "member",
+				"type": "address"
 			}
 		],
-		"name": "Check",
-		"type": "event"
+		"name": "buyStake",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [],
@@ -89,6 +83,30 @@ var abi = [
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "nows",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "then",
+				"type": "uint256"
+			}
+		],
+		"name": "Check",
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -265,13 +283,74 @@ var abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "viewConcludedPools",
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "no",
+				"type": "uint256"
+			}
+		],
+		"name": "viewAuctionedMembers",
 		"outputs": [
 			{
-				"internalType": "uint256[]",
+				"internalType": "address",
 				"name": "",
-				"type": "uint256[]"
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "viewAuctionedStakes",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "poolId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "poolAssetName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "poolAssetAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "stakeAssetName",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "stakeAssetAmount",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct Utils.Auction[10]",
+				"name": "auctions",
+				"type": "tuple[10]"
+			},
+			{
+				"internalType": "uint8",
+				"name": "count",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -293,9 +372,34 @@ var abi = [
 		"name": "viewCycle",
 		"outputs": [
 			{
-				"internalType": "contract Cycle",
-				"name": "",
+				"internalType": "address[10]",
+				"name": "members",
+				"type": "address[10]"
+			},
+			{
+				"internalType": "address[10]",
+				"name": "payedMembers",
+				"type": "address[10]"
+			},
+			{
+				"internalType": "address",
+				"name": "winner",
 				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "cycleStatus",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "l1",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "l2",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -304,6 +408,25 @@ var abi = [
 	{
 		"inputs": [],
 		"name": "viewPendingPools",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_account",
+				"type": "address"
+			}
+		],
+		"name": "viewPendingPools_withAccount",
 		"outputs": [
 			{
 				"internalType": "uint256[]",
@@ -411,7 +534,7 @@ var abi = [
 		"type": "function"
 	}
 ];
-var contractAddress = "0xc603671474AbDE8D798C282f7389c9a5fBb66Bf9";
+var contractAddress = "0x98ad6F4e4eD8c5215bB51511B58dC3ef673e6a80";
 var contract;
 var self;
 
@@ -431,7 +554,7 @@ async function connectWeb3() {
         self = await web3.eth.getAccounts();
         self = self[0].toString();
         web3.eth.handleRevert = true;
-        console.log(self);
+        console.log("Your address: " + self);
 	}
     else if(typeof web3 !== 'undefined') {
         console.log('Web3 Detected! ' + web3.currentProvider.constructor.name);
@@ -466,7 +589,7 @@ async function dashboard(){
             $("#contributed"+x[i]['assetName']).html(x[i]['contributed'] + " " + x[i]['assetName']);
             $("#contributed"+x[i]['assetName']).html(x[i]['contributed'] + " " + x[i]['assetName']);
         }
-        console.log(x);
+        // console.log(x);
     });
 }
 
@@ -533,7 +656,7 @@ $("#loadRunningPools").on("click", async function(e){
                                                     )/*.then(function(){
 
                                                     })*/;
-        console.log(pools);                                                    
+        // console.log(pools);                                                    
         for(i=0; i<pools.length; i++){
 			pool = await contract.methods.viewPool(pools[i]).call({from: addr}).then( function(pool){
 				$("#runningPools").append(
@@ -554,17 +677,6 @@ $("#loadRunningPools").on("click", async function(e){
     });
 });
 
-$("#runningPools").on("click", ".viewPool", async function(e){
-	console.log($(this).attr("poolid"));
-	id = $(this).attr("poolid");
-    getSelf().then(async function(addr){
-        pools = await contract.methods.joinPool(id).send({from: addr}
-                                                    )/*.then(function(){
-
-                                                    })*/;
-    });
-});
-
 
 $("#loadPendingPools").on("click", async function(e){
     e.preventDefault();
@@ -573,7 +685,7 @@ $("#loadPendingPools").on("click", async function(e){
                                                     )/*.then(function(){
 
                                                     })*/;
-        console.log(pools);                                                    
+        // console.log(pools);                                                    
         for(i=0; i<pools.length; i++){
 			pool = await contract.methods.viewPool(pools[i]).call({from: addr}).then( function(pool){
 				$("#pendingPools").append(
@@ -613,41 +725,71 @@ $("#viewPool").on("click", async function(e){
 	e.preventDefault();
 	id = $.urlParam('id');
     getSelf().then(async function(addr){
-        pool = await contract.methods.viewPool(id).call({from: addr}).then( function(pool){
-			$("#viewPool").append(
-				`<div class="col-4 col-lg-6 mb-3">
-					<div class="card text-center bg-dark">
-					<img src="../Includes/icons/shape.png" class="float-left mt-2" width="15" height="12">
-					<div class="card-body p-0">
-							<h5 class="card-title font-weight-bolder"><span>${pool.poolName}</span></h5>
-							<p class="mb-1">Contributing<code> ${pool.poolAssetAmount} ${pool.poolAssetName}</code></p>
-							<p>Staking<code > ${pool.stakeAssetAmount} ${pool.stakeAssetName}</code></p>
-					</div>
-					<div class="card-footer p-0 text-muted">
-						<img src="../Includes/icons/person.svg" alt="user">${pool.currentNoOfMembers}/${pool.maxNoOfMembers}
-						<button type="button" class="btn btn-main btn-sm joinPool my-2 ml-3" poolId="${pool.id}">Join</button>
-					</div>
-					</div>
-				</div>`
-			);
-		});
+        pool = await contract.methods.viewPool(id).call({from: addr});//.then( function(pool){
+		$("#poolID").html(pool.id);
+		$("#poolName").html(pool.poolName);
+		$("#poolAsset").html(pool.poolAssetName);
+		$("#amount").html(pool.poolAssetAmount);// +" " + pool.poolAssetName);
+		$("#currentCycle").html(pool.currentCycleNo);
+		$("#remainingCycles").html(parseInt(pool.currentNoOfMembers) - parseInt(pool.currentCycleNo));
+		$("#status").html(pool.poolStatus);
+		pool.currentCycleNo = 1;
+		if(parseInt(pool.currentCycleNo) /*|| parseInt(pool.currentNoOfMembers) != parseInt(pool.currentCycleNo)*/){
+			cycle = await contract.methods.viewCycle(id, pool.currentCycleNo).call({from: addr}).then( function(cycle, pool){
+				if(cycle.cycleStatus != "concluded"){
+					$("#cycleEarnings").html(cycle.payedMembers.length * parseInt($("#amount").html()));
+					$("#status").html(cycle.cycleStatus);
+				}
+			});
+
+			for(i=0; i<pool.currentCycleNo; i++){
+				cycle = await contract.methods.viewCycle(id, i).call({from: addr}).then( function(cycle){
+					if(cycle.winner == addr){
+						$("#winSatus").html(`You won cycle ${i}`);
+					}
+				});
+			}
+		}
+		//});
 	});
 });
 
+
+async function viewCycle(poolId, cycleNo){
+	
+}
+
+$("#loadMarkets").on("click", async function(e){
+    e.preventDefault();
+    getSelf().then(async function(addr){
+        auctionData = await contract.methods.viewAuctionedStakes().call({from: addr})
+        // console.log(auctionData);                                                    
+        for(i=0; i<auctionData.count; i++){
+			$("#markets").append(
+				`<div class="box-container d-flex align-items-center">
+					<div class="bold-pair">
+						<h2 class="font-weight-bold">${auctionData.auctions[i].stakeAssetName}<span class="unit font-weight-bold">/${auctionData.auctions[i].poolAssetName}</span></h2>
+					</div>
+					<p class="price" id="lastPrice">${/*auctionData.auctions[i].price*/1}</p>
+					<p class="price" id="quantity">${auctionData.auctions[i].poolAssetAmount}</p>
+					<button class="changes btn btn-sm px-4 action" id="action" poolId="${auctionData.auctions[i].poolId}" account="${auctionData.auctions[i].account}">BUY</button>
+				</div>`
+			);
+        }
+    });
+});
+
+$("#markets").on("click", ".action", async function(e){
+	id = $(this).attr("poolid");
+	account = $(this).attr("account");
+    getSelf().then(async function(addr){
+        buy = await contract.methods.buyStake(id, account).send({from: addr});
+    });
+});
 
 $.urlParam = function(name){
 	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 	return results[1] || 0;
 }
-// $("#pendingPools").on("click", ".joinPool", async function(e){
-// 	console.log($(this).attr("poolid"));
-// 	id = $(this).attr("poolid");
-//     getSelf().then(async function(addr){
-//         pools = await contract.methods.joinPool(id).send({from: addr}
-//                                                     )/*.then(function(){
-
-//                                                     })*/;
-//     });
-// });
 
 });// jquery

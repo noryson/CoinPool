@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.6.2 <0.9.0;
+pragma solidity >=0.6.2 ;
+import "./Pool.sol";
+import "./Cycle.sol";
 
 library Utils{
     
@@ -15,32 +17,41 @@ library Utils{
         uint256 contributed;
     }
     
-    function compareString(string memory first, string memory second) public view returns(bool){
+    struct Auction{
+        uint poolId;
+        address account;
+        string poolAssetName;
+        uint256 poolAssetAmount;
+        string stakeAssetName;
+        uint256 stakeAssetAmount;
+    }
+    
+    function compareString(string memory first, string memory second) public pure returns(bool){
         if(keccak256(bytes(first)) == keccak256(bytes(second))){
             return true;
         }
         return false;
     }
     
-    function generateRandomUint() public returns(uint randomUint){
+    function generateRandomUint() public view returns(uint randomUint){
         // Using keccak to generate random data as solidity has low support for this.
         randomUint = uint(keccak256(abi.encodePacked(block.timestamp)));
     }
     
-    function generateRandomUint256() public returns(uint256 randomUint){
+    function generateRandomUint256() public view returns(uint256 randomUint){
         // Using keccak to generate random data as solidity has low support for this.
         randomUint = uint256(keccak256(abi.encodePacked(block.timestamp)));
     }
     
-    function timestampDays(uint _days) public returns(uint256 timestamp){
+    function timestampDays(uint _days) public view returns(uint256 timestamp){
         timestamp =  uint256(block.timestamp + (_days *  40 ));
     }
     
-    function timestamp(uint _days) public returns(uint256 timestamp){
+    function timestamp(uint _days) public pure returns(uint256 timestamp){
         timestamp =  uint256((_days *  40));
     }
     
-    function chooseRandomBetween(uint _start, uint _stop) public returns(uint _randomIndex){
+    function chooseRandomBetween(uint _start, uint _stop) public view returns(uint _randomIndex){
         _randomIndex = (uint(keccak256(abi.encodePacked(block.timestamp))) % _stop) + _start;
     }
     
@@ -61,6 +72,56 @@ library Utils{
 } //Utils
 
 
+library ext1{
+    function viewAuctionedStakes(PoolsList listOfPools) public view returns(Utils.Auction[10] memory auctions, uint8 count){
+        // Pool[] memory pools = getList_ofPools().getRunningPools();
+        Pool[] memory pools = listOfPools.getRunningPools();
+        // Auction[] memory auctions = new Auction[](pools.length * 10);
+        // Utils.Auction[] memory auctionDatas = new Utils.Auction[]();
+        count = 0;
+        for(uint8 i=0; i<pools.length; i++){
+            Cycle cycle = pools[i].getCyclesList().getCurrentCycle();
+            if(cycle.getCycleStatus() == Cycle.CycleStatus.AUCTIONING){
+                for(uint8 j=0; j<cycle.getAuctioningMembers().length; j++){
+                    Utils.Auction memory auctionData;
+                    auctionData.poolId = pools[i].getPoolId();
+                    auctionData.account = cycle.getAuctioningMembers()[j].getAccount();
+                    (auctionData.poolAssetName, auctionData.poolAssetAmount) = pools[i].getRequirement_forContributionAsset();
+                    (auctionData.stakeAssetName, ) = pools[i].getRequirement_forStakingAsset();
+                    auctionData.stakeAssetAmount = auctionData.poolAssetAmount;
+                    auctions[count] = auctionData;
+                    count++;
+                }
+            }
+        }
+        // allAuctions = auctions
+    }
+
+    function servicePool(uint _id, PoolsList listOfPools) public returns(bool){
+        // Pool pool = getList_ofPools().getPool_withId(_id);
+        Pool pool = listOfPools.getPool_withId(_id);
+        require(!pool.isPoolStatus_concluded(), "This pool has ended");
+        
+        //begin pending pools
+        // emit Check(block.timestamp, pool.getCycleStartDate());
+        if(pool.isPoolStatus_addingmembers() && block.timestamp > pool.getCycleStartDate()){
+            // pool.cycleStartDate = block.timestamp;
+            pool.runThisPool(new CyclesList(pool));
+            return true; 
+        }
+        
+        //select winners, conclude cycles, auction assets, pay users, initiate new cycles or conclude pool with no more cycles left
+        if(pool.isPoolStatus_running() && block.timestamp > pool.getCycleStartDate() 
+            + (pool.getCurrentCycleNo() * Utils.timestamp(pool.getCycleInterval()))){
+                
+            pool.getCyclesList().selectAWinningMember_forThisCycle();
+             return true;
+        }
+        
+        return false;
+    }
+}
+
 library Pool_Utils {
 
     //----------------------------------
@@ -79,14 +140,14 @@ library Pool_Utils {
     //----------------------------------
     // Functions
     //----------------------------------
-    function isSameStringValue(string memory _a, string memory _b)
-      internal pure returns (bool) {
-      if (bytes(_a).length != bytes(_b).length) {
-        return false;
-      } else {
-        return (keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b)));
-      }
-    } // isSameStringValue()
+    // function isSameStringValue(string memory _a, string memory _b)
+    //   internal pure returns (bool) {
+    //   if (bytes(_a).length != bytes(_b).length) {
+    //     return false;
+    //   } else {
+    //     return (keccak256(abi.encodePacked(_a)) == keccak256(abi.encodePacked(_b)));
+    //   }
+    // } // isSameStringValue()
 
    /* TODO TODO TODO
    function integerToString(uint _i) internal pure 

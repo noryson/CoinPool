@@ -103,12 +103,12 @@ contract Vault{
     }
 
     /* Helpers */
-    function getTotalBalance_ofVault() public view returns(uint256 _totalBalance) {
-        _totalBalance;
-        for(uint256 i=0; i<getNo_ofAccounts(); i++){
-            _totalBalance += balance[accounts[i]];
-        }
-    } // getTotalBalance_ofVault()
+    // function getTotalBalance_ofVault() public view returns(uint256 _totalBalance) {
+    //     _totalBalance;
+    //     for(uint256 i=0; i<getNo_ofAccounts(); i++){
+    //         _totalBalance += balance[accounts[i]];
+    //     }
+    // } // getTotalBalance_ofVault()
 
     function getBalance_ofAccount(address _account) public view returns(uint256) {
         return balance[_account];
@@ -126,17 +126,17 @@ contract Vault{
         return poolContributionBalance[_poolId][_account];
     }
     
-    function getPoolTotalContributionBalance(uint _poolId) public view returns(uint256){
-        return 5; //todo:
-    }
+    // function getPoolTotalContributionBalance(uint _poolId) public view returns(uint256){
+    //     return 5; //todo:
+    // }
     
     function getPoolStakeBalance_withAccount(uint _poolId, address _account) public view returns(uint256){
         return poolStakeBalance[_poolId][_account];
     }
     
-    function getPoolTotalStakeBalance(uint _poolId) public view returns(uint256){
-        return 5; //todo:
-    }
+    // function getPoolTotalStakeBalance(uint _poolId) public view returns(uint256){
+    //     return 5; //todo:
+    // }
     
     
     /* GUI Functions */
@@ -172,7 +172,7 @@ contract VaultMap{
     event AddAccount(address indexed _account);
 
     // Functions
-    constructor(address _owner, address _self) public {
+    constructor(address _owner, address _self){
         //Initialize vaults for all supported assets. All vault must hold special accounts for the contract used in
         //collecting incentives and the owner of the contract
         owner = _owner;
@@ -283,14 +283,26 @@ contract VaultMap{
         return getConnectedAccounts().length;
     }
     event D(uint256 value, string []);
-    function getAccountStatement(address _account) public view returns(Utils.AccountSummary[] memory){
+    function getAccountStatement(address _account, uint[] memory _runningPools, uint[] memory _pendingPools) public view returns(Utils.AccountSummary[] memory){
         Utils.AccountSummary[] memory summary = new Utils.AccountSummary[](getNo_ofVaults());
         for(uint i=0; i<getNo_ofVaults(); i++){
             Vault vault = getVault_withName(getVaultNames()[i]);
             summary[i].assetName = vault.getAssetName();
             summary[i].available = vault.getBalance_ofAccount(_account);
-            summary[i].staked = 1; //todo: get all poolId and find this and the next (pooled)
-            summary[i].contributed = 1;
+            summary[i].staked = 0; 
+            //get all poolId and find this and the next (pooled)
+            for(uint8 j=0; j<_runningPools.length; j++){
+                summary[i].staked += vault.getPoolStakeBalance_withAccount(_runningPools[j], _account);
+            }
+            
+            for(uint8 j=0; j<_pendingPools.length; j++){
+                summary[i].staked += vault.getPoolStakeBalance_withAccount(_pendingPools[j], _account);
+            }
+            
+            summary[i].contributed = 0;
+            for(uint8 j=0; j<_runningPools.length; j++){
+                summary[i].contributed += vault.getPoolContributionBalance_withAccount(_runningPools[j], _account);
+            }
         }
         return summary;
     }

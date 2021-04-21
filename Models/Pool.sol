@@ -31,7 +31,7 @@ contract Pool {
     uint8 private numberOfCycles;  
     uint8 private cycleInterval;  // Total number of cycles intervals measured in days (week,month?) (days between cycles).    
     uint256 private cycleStartDate;  // Timestamp that the cycle started.
-    uint8 private currentCycleNo;
+    // uint8 private currentCycleNo;
     uint8 private currentNoOfMembers;
     PoolStatus private poolStatus;    // (initialising,addingmembers,readytorun, running,concluded)  
     
@@ -54,9 +54,9 @@ contract Pool {
         require(poolStatus == PoolStatus.addingmembers, "This task can only be done when Adding Members to this Pool."); _;
     } // onlyWhenAddingMembers()
 
-    modifier onlyWhenItsReadyToRun() {
-        require(poolStatus == PoolStatus.readytorun, "This task can only be done when this Pool is Ready to Run."); _;
-    } // onlyWhenItsReadyToRun()
+    // modifier onlyWhenItsReadyToRun() {
+    //     require(poolStatus == PoolStatus.readytorun, "This task can only be done when this Pool is Ready to Run."); _;
+    // } // onlyWhenItsReadyToRun()
 
     modifier onlyWhenThePoolIsRunning() {
         require(poolStatus == PoolStatus.running, "This task can only be done when the Pool is Running."); _;
@@ -102,32 +102,36 @@ contract Pool {
         cycleStartDate = Utils.timestampDays(1); // setting waiting period to 7 days by default.
         poolStatus = PoolStatus.addingmembers; 
 
-        membersList = new MembersList(maxNoOfMembers); // List of all members that will be playing in this pool
+        membersList = new MembersList(_maxNoOfMembers); // List of all members that will be playing in this pool
     } // constructor()
 
     //----------------------------------
     // Helper Functions
     //----------------------------------
-    // function getPoolStatus_asString() private view 
-    //   returns(string memory _poolStatusText) {
+    function getPoolStatus_asString() public view 
+      returns(string memory _poolStatusText) {
 
-    //   if (poolStatus == PoolStatus.initialising) {
-    //      _poolStatusText = "initialising";
-    //   }
-    //   else if (poolStatus == PoolStatus.addingmembers) {
-    //      _poolStatusText = "addingmembers";
-    //   }
-    //   else if (poolStatus == PoolStatus.readytorun) {
-    //      _poolStatusText = "readytorun";
-    //   }
-    //   else if (poolStatus == PoolStatus.running) {
-    //      _poolStatusText = "running";
-    //   }
-    //   else {
-    //      _poolStatusText = "concluded";
-    //   }
+      if (poolStatus == PoolStatus.initialising) {
+         _poolStatusText = "initialising";
+      }
+      else if (poolStatus == PoolStatus.addingmembers) {
+         _poolStatusText = "addingmembers";
+      }
+      else if (poolStatus == PoolStatus.readytorun) {
+         _poolStatusText = "readytorun";
+      }
+      else if (poolStatus == PoolStatus.running) {
+         _poolStatusText = "running";
+      }
+      else {
+         _poolStatusText = "concluded";
+      }
       
-    // } // getPoolStatus_asString()
+    } // getPoolStatus_asString()
+    
+    function getPoolStatus() public view returns(PoolStatus){
+        return poolStatus;
+    }
 
     //----------------------------------
     // GUI Functions
@@ -203,7 +207,7 @@ contract Pool {
     }
     
     function getCurrentCycleNo() public view returns(uint8){
-        return currentCycleNo;
+        return cyclesList.getCurrentCycle().getCycleNo();
     }
     
     function getMap_ofVaults() public view returns(VaultMap){
@@ -225,10 +229,10 @@ contract Pool {
         poolStatus = PoolStatus.concluded;
     } // setPoolStatusTo_addingmembers()
 
-    function isPoolStatus_readytorun() public view returns(bool) {
-        if(poolStatus == PoolStatus.readytorun)
-            return true;
-    } // isPoolStatus_readytorun()
+    // function isPoolStatus_readytorun() public view returns(bool) {
+    //     if(poolStatus == PoolStatus.readytorun)
+    //         return true;
+    // } // isPoolStatus_readytorun()
 
     function isPoolStatus_running() public view returns(bool _value) {
         if(poolStatus == PoolStatus.running)
@@ -268,6 +272,10 @@ contract Pool {
       _cyclesList = cyclesList;
     }
     
+    function getContractOwner() public view returns(address){
+        return owner;
+    }
+    
     function hasMember_withAccount(address _account) public view returns(bool){
         for(uint i=0; i<getMembersList().getLength(); i++){
             if(getMembersList().getMember_atIndex(i).getAccount() == _account){
@@ -289,7 +297,8 @@ contract Pool {
     
     
     function join(address _account) onlyWhenAddingMembers public{
-        (bool exist, uint index) = getMembersList().isThisUserAlreadyAMember(_account);
+        // (bool exist, uint index) = membersList.isThisUserAlreadyAMember(_account);
+        // require(!exist, "This member already exist");
         membersList.addNewMember(_account);
     }
     
@@ -327,9 +336,9 @@ contract PoolsList{
         require(status == Status.INITIALIZING); _;
     }
     
-    modifier onlyWhenReady(){
-        require(status == Status.READY); _;
-    }
+    // modifier onlyWhenReady(){
+    //     require(status == Status.READY); _;
+    // }
     
     // Events
     event AddNewPool(uint _poolId);
@@ -402,32 +411,32 @@ contract PoolsList{
         for(uint i=0; i<getLength(); i++){
             Pool pool = getPool_atIndex(i);
             if(pool.isPoolStatus_running() && pool.hasMember_withAccount(_account)){
-                runningPools[count] = pool;
                 count--;
+                runningPools[count] = pool;
             }
         }
         return runningPools;
     }
     
-    function getConcludedPools_withAccount(address _account) public view returns(Pool[] memory){
-        uint count;
-        for(uint i=0; i<getLength(); i++){
-            Pool pool = getPool_atIndex(i);
-            if(pool.isPoolStatus_concluded() && pool.hasMember_withAccount(_account)){
-                count++;
-            }
-        }
+    // function getConcludedPools_withAccount(address _account) public view returns(Pool[] memory){
+    //     uint count;
+    //     for(uint i=0; i<getLength(); i++){
+    //         Pool pool = getPool_atIndex(i);
+    //         if(pool.isPoolStatus_concluded() && pool.hasMember_withAccount(_account)){
+    //             count++;
+    //         }
+    //     }
         
-        Pool[] memory concludedPools = new Pool[](count);
-        for(uint i=0; i<getLength(); i++){
-            Pool pool = getPool_atIndex(i);
-            if(pool.isPoolStatus_concluded() && pool.hasMember_withAccount(_account)){
-                concludedPools[count] = pool;
-                count--;
-            }
-        }
-        return concludedPools;
-    }
+    //     Pool[] memory concludedPools = new Pool[](count);
+    //     for(uint i=0; i<getLength(); i++){
+    //         Pool pool = getPool_atIndex(i);
+    //         if(pool.isPoolStatus_concluded() && pool.hasMember_withAccount(_account)){
+    //             count--;
+    //             concludedPools[count] = pool;
+    //         }
+    //     }
+    //     return concludedPools;
+    // }
     
     function getPendingPools_withAccount(address _account) public view returns(Pool[] memory){
         uint count;
@@ -442,8 +451,8 @@ contract PoolsList{
         for(uint i=0; i<getLength(); i++){
             Pool pool = getPool_atIndex(i);
             if(pool.isPoolStatus_addingmembers() && pool.hasMember_withAccount(_account)){
-                pendingPools[count] = pool;
                 count--;
+                pendingPools[count] = pool;
             }
         }
         return pendingPools;
@@ -469,25 +478,25 @@ contract PoolsList{
         return runningPools;
     }
     
-    function getConcludedPools() public view returns(Pool[] memory){
-        uint count;
-        for(uint i=0; i<getLength(); i++){
-            Pool pool = getPool_atIndex(i);
-            if(pool.isPoolStatus_concluded()){
-                count++;
-            }
-        }
+    // function getConcludedPools() public view returns(Pool[] memory){
+    //     uint count;
+    //     for(uint i=0; i<getLength(); i++){
+    //         Pool pool = getPool_atIndex(i);
+    //         if(pool.isPoolStatus_concluded()){
+    //             count++;
+    //         }
+    //     }
         
-        Pool[] memory concludedPools = new Pool[](count);
-        for(uint i=0; i<getLength(); i++){
-            Pool pool = getPool_atIndex(i);
-            if(pool.isPoolStatus_concluded()){
-                count--;
-                concludedPools[count] = pool;
-            }
-        }
-        return concludedPools;
-    }
+    //     Pool[] memory concludedPools = new Pool[](count);
+    //     for(uint i=0; i<getLength(); i++){
+    //         Pool pool = getPool_atIndex(i);
+    //         if(pool.isPoolStatus_concluded()){
+    //             count--;
+    //             concludedPools[count] = pool;
+    //         }
+    //     }
+    //     return concludedPools;
+    // }
     
     function getPendingPools() public view returns(Pool[] memory){
         uint count;
@@ -543,6 +552,9 @@ contract PoolsList{
     //----------------------------------
     // External Functions
     //----------------------------------
-
+    
+    function getContractOwner() public view returns(address){
+        return owner;
+    }
 
 } //contract PoolsList 

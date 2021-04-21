@@ -6,22 +6,24 @@ import "./Pool.sol";
 import "./Member.sol";
 import "./Vault.sol";
 
+
+
 contract Cycle{
     //----------------------------------
     // Type definitions
     //----------------------------------
-    enum CycleStatus {initialising,allocateWinner,AUCTIONING,concluded} 
+    enum CycleStatus {initialising,allocateWinner,AUCTIONING,concluded}
     //----------------------------------
     // Data
     //----------------------------------
-    uint private id;  // unique Identification for each Cycle.
+    // uint private id;  // unique Identification for each Cycle.
     
     Pool private parentPool;
     MembersList private poolMembersList;
     Member[] private payedMembers;
     Member[] private auctioningMembers;
 
-    uint private cycleNo; // eg 1/10,2/10 etc
+    uint8 private cycleNo; // eg 1/10,2/10 etc
 
     Member private WinningMember; // The member that won this round/cycle
 
@@ -60,7 +62,7 @@ contract Cycle{
     //----------------------------------
     // Functions
     //----------------------------------
-    constructor(uint _cycleNo, Pool _parentPool, MembersList _poolMembersList) {
+    constructor(uint8 _cycleNo, Pool _parentPool, MembersList _poolMembersList) {
       cycleNo = _cycleNo;
 
       parentPool = _parentPool;
@@ -86,8 +88,11 @@ contract Cycle{
         for(uint i=0; i<poolMembersList.getLength(); i++){
             vault.transferContribution_fromPool(parentPool.getPoolId(), 
                                                 poolMembersList.getMember_atIndex(i).getAccount(),
-                                                WinningMember.getAccount(), amount);
-            //todo: send incentive to contract
+                                                WinningMember.getAccount(), amount - (amount/100));
+            //send incentive to contract
+            vault.transferContribution_fromPool(parentPool.getPoolId(), 
+                                                parentPool.getMembersList().getMember_atIndex(i).getAccount(),
+                                                parentPool.getContractOwner(), (amount/100));
         }
         
         cycleStatus = CycleStatus.concluded;
@@ -98,10 +103,42 @@ contract Cycle{
         cycleStatus = CycleStatus.AUCTIONING;
         auctioningMembers.push(_member);
     }
+    
+    function buyStake(address _member, address _buyer) public{
+        Member member;
+        for(uint8 i=0; i<getMemberList().getLength(); i++){
+            if(getMemberList().getMember_atIndex(i).getAccount() == _member){
+                member = getMemberList().getMember_atIndex(i);
+                break;
+            }
+        }
+        
+        require(!hasMemberPayed(member), "Member not auctioning");
+        (string memory name, uint256 amount) = parentPool.getRequirement_forContributionAsset();
+        Vault vault = parentPool.getMap_ofVaults().getVault_withName(name);
+        vault.transfer(_buyer, _member, amount);
+        vault.transferContribution_toPool(_member, parentPool.getPoolId(), amount);
+        vault.transferStake_fromPool(parentPool.getPoolId(), _member, _buyer, amount);
+        payedMembers.push(member);
+        
+        // remove member from auction, if auction is empty, change state to running
+        for(uint8 i=0; i<auctioningMembers.length; i++){
+            if(auctioningMembers[i].getAccount() == _member){
+                auctioningMembers[i] = auctioningMembers[auctioningMembers.length - 1];
+                auctioningMembers.pop();
+                break;
+            }
+        }
+        
+        if(auctioningMembers.length == 0){
+            cycleStatus = CycleStatus.allocateWinner;
+        }
+    }
+    
     //----------------------------------
     // Helper Functions
     //----------------------------------
-    function hasMemberPayed(Member _member) public returns(bool){
+    function hasMemberPayed(Member _member) public view returns(bool){
         for(uint i=0; i<payedMembers.length; i++){
             if(payedMembers[i].getAccount() == _member.getAccount()){
                 return true;
@@ -110,7 +147,7 @@ contract Cycle{
         return false;
     }
     
-    function hasAllMembersPayed() public returns(bool){
+    function hasAllMembersPayed() public view returns(bool){
         for(uint i=0; i<poolMembersList.getLength(); i++){
             if(!hasMemberPayed(poolMembersList.getMember_atIndex(i))){
                 // todo: check if contribution time has passed and trigger auction
@@ -127,18 +164,52 @@ contract Cycle{
     //----------------------------------
     // GUI Functions
     //----------------------------------
-    function getCycleNo() public view returns(uint256) {
+    function getCycleNo() public view returns(uint8) {
        return cycleNo;
     } // getCycleNo()
     
     function getMemberList() public view returns(MembersList){
         return poolMembersList;
     }
+    
+    function getAuctioningMembers() public view returns(Member[] memory){
+        return auctioningMembers;
+    }
+    
+    function getPayedMembers() public view returns(Member[] memory){
+        return payedMembers;
+    }
+    
+    function getWinner() public view returns(Member){
+        return WinningMember;
+    }
+    
+    function getCycleStatus() public view returns(CycleStatus){
+        return cycleStatus;
+    }
+    
+    function getCycleStatus_asString() public view 
+      returns(string memory _cycleStatusText) {
+
+      if (cycleStatus == CycleStatus.initialising) {
+         _cycleStatusText = "initialising";
+      }
+      else if (cycleStatus == CycleStatus.allocateWinner) {
+         _cycleStatusText = "allocateWinner";
+      }
+      else if (cycleStatus == CycleStatus.AUCTIONING) {
+         _cycleStatusText = "AUCTIONING";
+      }
+      else {
+         _cycleStatusText = "concluded";
+      }
+      
+    }
 
     //----------------------------------
     // External Functions
     //----------------------------------
-    function setCycleStatusTo_allocateWinner() public onlyWhenInitialising {
+    function setCycleStatusTo_allocateWinner() public onlyWhenInitialising{
         cycleStatus = CycleStatus.allocateWinner;
     }
     
@@ -200,7 +271,7 @@ contract CyclesList{
     constructor(Pool pool) {
         parentPool = pool;
         // poolAddress = _poolAddress;
-        poolMembersList = parentPool.getMembersList();
+        poolMembersList = pool.getMembersList();
         initialiseAvailiableWinningMembersArray();
 
     } // constructor()
@@ -239,6 +310,9 @@ contract CyclesList{
     //   listOfCycles.pop();
 
     } // removeCycle_atIndex()
+    function getMembersList() public view returns(MembersList _membersList){
+      _membersList = poolMembersList;
+    }
 
     function initialiseAvailiableWinningMembersArray() private {
        Member _member;
@@ -298,7 +372,15 @@ contract CyclesList{
         if(_cycle.getCycleNo() == poolMembersList.getLength()){
             emit Check("concluded");
             getPool().setPoolStatusTo_concluded();
-            //todo: transfer all stakes back to members
+            
+            //transfer all stakes back to members
+            (string memory name, ) = getPool().getRequirement_forStakingAsset();
+            Vault vault = getPool().getMap_ofVaults().getVault_withName(name);
+            for(uint8 i=0; i<getMembersList().getLength(); i++){
+                uint256 amount = vault.getPoolStakeBalance_withAccount(parentPool.getPoolId(), getMembersList().getMember_atIndex(i).getAccount());
+                vault.transferStake_fromPool(parentPool.getPoolId(), getMembersList().getMember_atIndex(i).getAccount(), 
+                                            getMembersList().getMember_atIndex(i).getAccount(), amount);
+            }
         }
         else{
             addNewCycle();
@@ -311,7 +393,7 @@ contract CyclesList{
     // GUI Functions
     //----------------------------------
     function addNewCycle() public returns (uint _index){
-         uint _cycleNo = listOfCycles.length +1;
+         uint8 _cycleNo = uint8(listOfCycles.length) +1;
 
          Cycle _NewCycle = new Cycle(_cycleNo, getPool(), poolMembersList);
          listOfCycles.push(_NewCycle);

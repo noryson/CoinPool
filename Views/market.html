@@ -7,12 +7,15 @@
         <title>CoinPool - Market</title>
         <link href="../css/bootstrap-4.3.1.css" rel="stylesheet" type="text/css">
         <link rel='stylesheet' type='text/css' media='screen' href='../css/main.css'>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script language="JavaScript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
+        <script src="../js/script.js"></script>
         </head>
 <body>
     <!---Header section starts-->
     <header>
        	<!--Navigation Bar Starts-->
-<nav class="navbar fixed-top navbar-expand-lg bg-main navbar-dark "><a class="navbar-brand light" href="#" style="font-family: poppins; font-weight: bold"><img src="../Includes/icons/pool.png" width="24px;"><span>COIN</span>POOL</a>
+<nav class="navbar fixed-top navbar-expand-lg bg-main navbar-dark "><a class="navbar-brand light" href="#" style="font-family: Arial, Helvetica, sans-serif; font-weight: bold"><img src="../Includes/icons/pool.png" width="24px;"><span>COIN</span>POOL</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
   <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent1">
     <ul class="navbar-nav">
@@ -29,94 +32,26 @@
             <div>
                 <h3 id="top">Top Gainers</h3>
             </div>
+            
+            <script> $(document).ready(function(){ $("#loadMarkets").click(); });</script>
+            <span class="hidden" id="loadMarkets"></span>
             <section id="markets">
                 <div id="faded" class="box-container">
                     <h3>Pair</h3>
                     <h3>Last Price</h3>
-                    <h3>24 Chng%</h3>
+                    <h3>Qty</h3>
+                    <h3>Action</h3>
                 </div>
 
-                <div class="box-container">
+                <!-- <div class="box-container d-flex align-items-center">
                     <div class="bold-pair">
-                        <h2>FILUP<span class="unit">/USDT</span></h2>
+                        <h2 class="font-weight-bold">CPT<span class="unit font-weight-bold">/BNB</span></h2>
                     </div>
-                    <p class="price">79.140</p>
-                    <p class="changes">+57.35%</p>
-                </div>
+                    <p class="price" id="lastPrice">79.140</p>
+                    <p class="price" id="quantity">7</p>
+                    <button class="changes btn btn-sm px-4" id="action" poolId="" account="">BUY</button>
+                </div> -->
 
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>TRXUP<span class="unit">/USDT</span></h2>
-                    </div>
-                    <p class="price">10.634</p>
-                    <p class="changes">+56.36%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>FIL<span class="unit">/USDT</span></h2>
-                    </div>
-                    <p class="price">216.9196</p>
-                    <p class="changes">+40.08%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>FIL<span class="unit">/BUSD</span></h2>
-                    </div>
-                    <p class="price">216.6264</p>
-                    <p class="changes">+39.72%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>FIL<span class="unit">/BTC</span></h2>
-                    </div>
-                    <p class="price">0.0036937</p>
-                    <p class="changes">+38.48%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>WIN<span class="unit">/USDC</span></h2>
-                    </div>
-                    <p class="price">0.0005912</p>
-                    <p class="changes">+37.39%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>WIN<span class="unit">/USDT</span></h2>
-
-                    </div>
-                    <p class="price">0.00059363</p>
-                    <p class="changes">+37.27%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>EOSUP<span class="unit">/USDT</span></h2>
-
-                    </div>
-                    <p class="price">2.697</p>
-                    <p class="changes">+36.76%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>SUN<span class="unit">/USDT</span></h2>
-                    </div>
-                    <p class="price">39.877</p>
-                    <p class="changes">+34.33%</p>
-                </div>
-
-                <div class="box-container">
-                    <div class="bold-pair">
-                        <h2>SUN<span class="unit">/BTC</span></h2>
-                    </div>
-                    <p class="price">0.000682</p>
-                    <p class="changes">+33.46%</p>
-                </div>
             </section>
             </div>
         </div>

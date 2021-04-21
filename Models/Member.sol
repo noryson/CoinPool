@@ -24,45 +24,45 @@ contract Member {
     //----------------------------------
     // Modifiers
     //----------------------------------
-    modifier onlyWhenInitialising() {
-        require(
-            memberStatus == MemberStatus.initialising,
-            "This task can only be done while Initialising this Pool Member."
-        );
-        _;
-    } // onlyWhenInitialising()
+    // modifier onlyWhenInitialising() {
+    //     require(
+    //         memberStatus == MemberStatus.initialising,
+    //         "This task can only be done while Initialising this Pool Member."
+    //     );
+    //     _;
+    // } // onlyWhenInitialising()
 
-    modifier onlyWhenReadyToVerfyMember() {
-        require(
-            memberStatus == MemberStatus.readytoverify,
-            "This task can only be done when verifing this Pool Member."
-        );
-        _;
-    } // onlyWhenAddingMembers()
+    // modifier onlyWhenReadyToVerfyMember() {
+    //     require(
+    //         memberStatus == MemberStatus.readytoverify,
+    //         "This task can only be done when verifing this Pool Member."
+    //     );
+    //     _;
+    // } // onlyWhenAddingMembers()
 
-    modifier onlyWhenPoolMemberIsReadyToRun() {
-        require(
-            memberStatus == MemberStatus.readytorun,
-            "This task can only be done when this Pool Member is Ready to participate in the Pool."
-        );
-        _;
-    } // onlyWhenPoolMemberIsReadyToRun()
+    // modifier onlyWhenPoolMemberIsReadyToRun() {
+    //     require(
+    //         memberStatus == MemberStatus.readytorun,
+    //         "This task can only be done when this Pool Member is Ready to participate in the Pool."
+    //     );
+    //     _;
+    // } // onlyWhenPoolMemberIsReadyToRun()
 
-    modifier onlyWhenThePoolIsRunning() {
-        require(
-            memberStatus == MemberStatus.running,
-            "This task can only be done while the Pool Member is an active part of the Pool."
-        );
-        _;
-    } // onlyWhenPoolMemberIsReadyToRun()
+    // modifier onlyWhenThePoolIsRunning() {
+    //     require(
+    //         memberStatus == MemberStatus.running,
+    //         "This task can only be done while the Pool Member is an active part of the Pool."
+    //     );
+    //     _;
+    // } // onlyWhenPoolMemberIsReadyToRun()
 
-    modifier onlyWhenThePoolHasConculded() {
-        require(
-            memberStatus == MemberStatus.concluded,
-            "This task can only be done after the pool has been concluded for this Member."
-        );
-        _;
-    } // onlyWhenThePoolHasConculded()
+    // modifier onlyWhenThePoolHasConculded() {
+    //     require(
+    //         memberStatus == MemberStatus.concluded,
+    //         "This task can only be done after the pool has been concluded for this Member."
+    //     );
+    //     _;
+    // } // onlyWhenThePoolHasConculded()
     // ----------------------------------
     // Functions
     // ----------------------------------
@@ -188,17 +188,17 @@ contract Member {
 
     // } // setMemberStatusTo_readytorun()
 
-    function isMemberStatus_running() public view returns(bool _value) {
-        _value = (memberStatus == MemberStatus.running);
-    } // isMemberStatus_running()
+    // function isMemberStatus_running() public view returns(bool _value) {
+    //     _value = (memberStatus == MemberStatus.running);
+    // } // isMemberStatus_running()
 
     // function setMemberStatusTo_running() public onlyWhenPoolMemberIsReadyToRun {
     //     memberStatus = MemberStatus.readytorun;
     // } // setMemberStatusTo_running()
 
-    function isMemberStatus_concluded() public view returns(bool _value) {
-        _value = (memberStatus == MemberStatus.concluded);
-    } // isMemberStatus_concluded()
+    // function isMemberStatus_concluded() public view returns(bool _value) {
+    //     _value = (memberStatus == MemberStatus.concluded);
+    // } // isMemberStatus_concluded()
 
     // function setMemberStatusTo_concluded() public onlyWhenThePoolIsRunning {
 
@@ -219,7 +219,7 @@ contract MembersList {
     //----------------------------------
     address poolAddress;
     uint maxNoOfMembers;
-    Member[] private listOfMembers;
+    Member[] public listOfMembers;
 
     // MembersList working data
     //----------------------------------

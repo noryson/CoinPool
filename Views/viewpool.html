@@ -21,17 +21,17 @@
   <div class="row">
 	  <!--Left Pane Area-->
 	  <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">
-	  	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">ASSET: <p class="font-weight-bolder">BNB</p> </div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">NAME: </div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">PRICE: </div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">CURRENT SLOT: </div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">ROUNDS LEFT: </div>
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Name:  <span class="ml-5 font-weight-bolder" id="poolName"></span></div>
+	  	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Asset:  <span class="mx-5 font-weight-bolder" id="poolAsset"></span> Amount:  <span class="ml-5 font-weight-bolder" id="amount"></span></div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Current Cycle: <span class="mx-5 font-weight-bolder" id="currentCycle"></span> Cycles Left: <span class="ml-5 font-weight-bolder" id="remainingCycles"></span></div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Status: <span class="ml-5 font-weight-bolder" id="poolStatus"></span></div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Your wins: <span class="ml-5 font-weight-bolder" id="winStatus">You haven't won any cycle yet.</span></div>
 	  </div>
 	  
 	  <!--Right Pane Area-->
 	  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
 	  	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-1 text-center"><img src="../Includes/icons/cToken.png" alt="busd" width="70" class="mb-2"><br>QTY<br><button class="btn btn-main rounded-pill mt-2 font-weight-bold">TRADE</button></div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-1 text-center"><big>EARNINGS</big><br>BNB<br>QTY<br><button class="btn btn-main rounded-pill mt-2 font-weight-bold"><img src="../Includes/icons/lock.svg" alt="locked" width="18em"> PAYOUT</button></div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-1 text-center"><big>EARNINGS</big><div id="cycleEarnings">0</div><button class="btn btn-main rounded-pill mt-2 font-weight-bold"><img src="../Includes/icons/lock.svg" alt="locked" width="18em"> PAYIN</button></div>
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 text-center">
 		<button class="btn btn-main rounded-4 font-weight-bold">VIEW FULL LIST</button>
 		</div>
