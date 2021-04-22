@@ -10,7 +10,7 @@ Coinpool platform allows for the creation of contributing groups (thrift coopera
 
 ## Tools used in the project
 1. [UI/UX - Adobe XD](https://www.adobe.com/products/xd.html)
-2. [HTML5](https://dev.w3.org/html5)
+2. [HTML5](https://dev.w3.org/html5/spec-LC/)
 3. [Bootstrap4 - CSS3](https://getbootstrap.com/)
 4. [Solidity](https://soliditylang.org/)
 5. [Web3 Provider](https://docs.walletconnect.org/quick-start/dapps/web3-provider) 
