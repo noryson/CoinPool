@@ -7,26 +7,31 @@
 <title>CoinPool - View Pool</title>
 <link href="../css/bootstrap-4.3.1.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" media="screen" href="../css/main.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
+<script src="../js/script.js"></script>
 </head>
 
 
-<body style="color: #000000; font-family: 'Poppins'; font-weight: bold;">
+<body style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-weight: bold;">
 	<!--Assets Section Starts-->
+<script> $(document).ready(function(){ $("#viewPool").click(); });</script>
+<span class="hidden" id="viewPool"></span>
 <div class="container col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12 mx-auto pt-4 pb-4">
   <div class="row">
 	  <!--Left Pane Area-->
 	  <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">
-	  	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">ASSET: </div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">NAME: </div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">PRICE: </div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">CURRENT SLOT: </div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">ROUNDS LEFT: </div>
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Name:  <span class="ml-5 font-weight-bolder" id="poolName"></span></div>
+	  	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Asset:  <span class="mx-5 font-weight-bolder" id="poolAsset"></span> Amount:  <span class="ml-5 font-weight-bolder" id="amount"></span></div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Current Cycle: <span class="mx-5 font-weight-bolder" id="currentCycle"></span> Cycles Left: <span class="ml-5 font-weight-bolder" id="remainingCycles"></span></div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Status: <span class="ml-5 font-weight-bolder" id="poolStatus"></span></div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-3">Your wins: <span class="ml-5 font-weight-bolder" id="winStatus">You haven't won any cycle yet.</span></div>
 	  </div>
 	  
 	  <!--Right Pane Area-->
 	  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
 	  	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-1 text-center"><img src="../Includes/icons/cToken.png" alt="busd" width="70" class="mb-2"><br>QTY<br><button class="btn btn-main rounded-pill mt-2 font-weight-bold">TRADE</button></div>
-		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-1 text-center"><big>EARNINGS</big><br>BNB<br>QTY<br><button class="btn btn-main rounded-pill mt-2 font-weight-bold"><img src="../Includes/icons/lock.svg" alt="locked" width="18em"> PAYOUT</button></div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 bg-light rounded-4 p-3 mb-1 text-center"><big>EARNINGS</big><div id="cycleEarnings">0</div><button class="btn btn-main rounded-pill mt-2 font-weight-bold"><img src="../Includes/icons/lock.svg" alt="locked" width="18em"> PAYIN</button></div>
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 text-center">
 		<button class="btn btn-main rounded-4 font-weight-bold">VIEW FULL LIST</button>
 		</div>

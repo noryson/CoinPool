@@ -83,10 +83,10 @@ contract Main{
         getMap_ofVaults().withdrawAsset(_assetName, _amount, msg.sender, _receiver);
     }
     
-    function dashboard() onlyWhenRunning onlyWhenAccount_isConnected public
+    function dashboard() onlyWhenRunning onlyWhenAccount_isConnected public view
     returns(Utils.AccountSummary[] memory sum){
         address _account = msg.sender;
-        sum = getMap_ofVaults().getAccountStatement(_account);
+        sum = getMap_ofVaults().getAccountStatement(_account, viewRunningPools_withAccount(_account), viewPendingPools_withAccount(_account));
     }
     
     function viewRunningPools()onlyWhenRunning onlyWhenAccount_isConnected public view 
@@ -98,14 +98,23 @@ contract Main{
         return poolId;
     }
     
-    function viewConcludedPools()onlyWhenRunning onlyWhenAccount_isConnected public view 
+    function viewRunningPools_withAccount(address _account)onlyWhenRunning onlyWhenAccount_isConnected public view 
     returns(uint[] memory ){
-        Pool[] memory pool = getList_ofPools().getConcludedPools();
+        Pool[] memory pool = getList_ofPools().getRunningPools_withAccount(_account);
         uint[] memory poolId = new uint[](pool.length);
         for(uint i=0; i<pool.length; i++)
             poolId[i] = pool[i].getPoolId();
         return poolId;
     }
+    
+    // function viewConcludedPools()onlyWhenRunning onlyWhenAccount_isConnected public view 
+    // returns(uint[] memory ){
+    //     Pool[] memory pool = getList_ofPools().getConcludedPools();
+    //     uint[] memory poolId = new uint[](pool.length);
+    //     for(uint i=0; i<pool.length; i++)
+    //         poolId[i] = pool[i].getPoolId();
+    //     return poolId;
+    // }
     
     function viewPendingPools()onlyWhenRunning onlyWhenAccount_isConnected public view 
     returns(uint[] memory ){
@@ -115,15 +124,70 @@ contract Main{
             poolId[i] = pool[i].getPoolId();
         return poolId;
     }
-
-    function viewPool(uint _poolId)onlyWhenRunning onlyWhenAccount_isConnected public view  
-    returns(Pool){
-        return getList_ofPools().getPool_withId(_poolId);
+    
+    function viewPendingPools_withAccount(address _account)onlyWhenRunning onlyWhenAccount_isConnected public view 
+    returns(uint[] memory ){
+        Pool[] memory pool = getList_ofPools().getPendingPools_withAccount(_account);
+        uint[] memory poolId = new uint[](pool.length);
+        for(uint i=0; i<pool.length; i++)
+            poolId[i] = pool[i].getPoolId();
+        return poolId;
     }
     
-    function viewCycle(uint _poolId, uint _cycleNo)onlyWhenRunning onlyWhenAccount_isConnected public
-    returns(Cycle){
-        return getList_ofPools().getPool_withId(_poolId).getCyclesList().getCycle_atIndex(_cycleNo -1);
+    function viewPool(uint _poolId)onlyWhenRunning onlyWhenAccount_isConnected 
+        public view returns(uint id, string memory poolName, string memory poolAssetName, uint256 poolAssetAmount,
+                string memory stakeAssetName, uint256 stakeAssetAmount, uint8 maxNoOfMembers,   
+                uint8 currentCycleNo, uint8 currentNoOfMembers, string memory poolStatus){
+                    
+        Pool pool = getList_ofPools().getPool_withId(_poolId);
+        
+        id = pool.getPoolId();
+        poolName = pool.getPoolName();
+        poolStatus = pool.getPoolStatus_asString();
+        (poolAssetName, poolAssetAmount) = pool.getRequirement_forContributionAsset();
+        (stakeAssetName, stakeAssetAmount) = pool.getRequirement_forStakingAsset();
+        (maxNoOfMembers, currentNoOfMembers) = pool.getData_forMembers();
+        currentCycleNo = pool.getCurrentCycleNo();
+    }
+    
+    function viewCycle(uint _poolId, uint _cycleNo)onlyWhenRunning onlyWhenAccount_isConnected public view
+    returns(address[10] memory members,  address[10] memory payedMembers, address winner, string memory cycleStatus, uint256 l1, uint256 l2){
+        // Member[] private auctioningMembers;
+        
+        Cycle cycle = getList_ofPools().getPool_withId(_poolId).getCyclesList().getCycle_atIndex(_cycleNo -1);
+        // address[] memory allMembers = new address[](cycle.getMemberList().getLength());
+        for(uint8 i=0; i<cycle.getMemberList().getLength(); i++){
+            members[i] = cycle.getMemberList().getMember_atIndex(i).getAccount();
+        }
+        
+        // address[] memory payed = new address[](cycle.getPayedMembers().length);
+        for(uint8 i=0; i<cycle.getPayedMembers().length; i++){
+            payedMembers[i] = cycle.getPayedMembers()[i].getAccount();
+        }
+        
+        l1 = cycle.getMemberList().getLength();
+        l2 = cycle.getPayedMembers().length;
+        
+        if(address(cycle.getWinner()) != address(0x0))
+            winner = cycle.getWinner().getAccount();
+            
+        cycleStatus = cycle.getCycleStatus_asString();
+    }
+    
+    
+    function buyStake(uint poolId, address member) public{
+        getList_ofPools().getPool_withId(poolId).getCyclesList().getCurrentCycle().buyStake(member, msg.sender);
+        servicePool(poolId);
+    }
+    
+    
+    function viewAuctionedMembers(uint id, uint no) public view returns(address){
+        return getList_ofPools().getPool_withId(id).getCyclesList().getCurrentCycle().getAuctioningMembers()[no].getAccount();
+    }
+    
+    
+    function viewAuctionedStakes() public view returns(Utils.Auction[10] memory auctions, uint8 count){
+        return ext1.viewAuctionedStakes(getList_ofPools());
     }
 
     function joinPool(uint _poolId)onlyWhenRunning onlyWhenAccount_isConnected public{
@@ -136,35 +200,16 @@ contract Main{
         getList_ofPools().getPool_withId(_poolId).pay_toCycle(msg.sender);
     }
 
-    function createPool(string memory _nameOfPool, string memory _poolAsset, string memory _stakeAsset)
+    function createPool(string memory _name, string memory _poolAsset, uint256 _assetAmount, string memory _stakedAsset)
     onlyWhenRunning onlyWhenAccount_isConnected public returns(uint _id, uint256 _stakeAssetAmount){
-        (_id, _stakeAssetAmount) = getList_ofPools().addNewPool(_nameOfPool, msg.sender, _poolAsset, 100, _stakeAsset, 10, 1);
+        (_id, _stakeAssetAmount) = getList_ofPools().addNewPool(_name, msg.sender, _poolAsset, _assetAmount, _stakedAsset, 10, 1);
         joinPool(_id);
     }
     
     event Check(uint256 nows, uint256 then);
     
     function servicePool(uint _id) public returns(bool){
-        Pool pool = getList_ofPools().getPool_withId(_id);
-        require(!pool.isPoolStatus_concluded(), "This pool has ended");
-        
-        //begin pending pools
-        emit Check(block.timestamp, pool.getCycleStartDate());
-        if(pool.isPoolStatus_addingmembers() && block.timestamp > pool.getCycleStartDate()){
-            // pool.cycleStartDate = block.timestamp;
-            pool.runThisPool(new CyclesList(pool));
-            return true; 
-        }
-        
-        //select winners, conclude cycles, auction assets, pay users, initiate new cycles or conclude pool with no more cycles left
-        if(pool.isPoolStatus_running() && block.timestamp > pool.getCycleStartDate() 
-            + (pool.getCurrentCycleNo() * Utils.timestamp(pool.getCycleInterval()))){
-                
-            pool.getCyclesList().selectAWinningMember_forThisCycle();
-             return true;
-        }
-        
-        return false;
+        return ext1.servicePool(_id, getList_ofPools());
     }
 
     // Helpers and checkers

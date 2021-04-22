@@ -7,12 +7,15 @@
         <title>CoinPool - Market</title>
         <link href="../css/bootstrap-4.3.1.css" rel="stylesheet" type="text/css">
         <link rel='stylesheet' type='text/css' media='screen' href='../css/main.css'>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script language="JavaScript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
+        <script src="../js/script.js"></script>
         </head>
 <body>
     <!---Header section starts-->
     <header>
        	<!--Navigation Bar Starts-->
-<nav class="navbar fixed-top navbar-expand-lg bg-main navbar-dark "><a class="navbar-brand light" href="#" style="font-family: poppins; font-weight: bold"><img src="../Includes/icons/pool.png" width="24px;"><span>COIN</span>POOL</a>
+<nav class="navbar fixed-top navbar-expand-lg bg-main navbar-dark "><a class="navbar-brand light" href="#" style="font-family: Arial, Helvetica, sans-serif; font-weight: bold"><img src="../Includes/icons/pool.png" width="24px;"><span>COIN</span>POOL</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
   <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent1">
     <ul class="navbar-nav">
@@ -24,13 +27,36 @@
 <!--navigation bar ends-->
     </header>
     <!---Header section ends here-->
-   
-<!--Coin Markets Update Starts-->
-<div class="container col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-4 mb-4">
-<coingecko-coin-list-widget  coin-ids="ethereum,binance-bitcoin,aave,fil12,erc20,uniswap,xrp-bep2,venus-dot,dai,tron,litecoin,sushi,solana,algovest,iq-cash,the-sandbox,bitcoin,aapl,metahash,4artechnologies,eos,eos-eth,eos-btc,eosblack,trust,yearn-classic-finance,xend-finance,bubble-network" currency="usd" locale="en"></coingecko-coin-list-widget>
-	</div>
-<!--Coin Market Update Ends-->	
-	
+    <div id="background">
+        <div id="container">
+            <div>
+                <h3 id="top">Top Gainers</h3>
+            </div>
+            
+            <script> $(document).ready(function(){ $("#loadMarkets").click(); });</script>
+            <span class="hidden" id="loadMarkets"></span>
+            <section id="markets">
+                <div id="faded" class="box-container">
+                    <h3>Pair</h3>
+                    <h3>Last Price</h3>
+                    <h3>Qty</h3>
+                    <h3>Action</h3>
+                </div>
+
+                <!-- <div class="box-container d-flex align-items-center">
+                    <div class="bold-pair">
+                        <h2 class="font-weight-bold">CPT<span class="unit font-weight-bold">/BNB</span></h2>
+                    </div>
+                    <p class="price" id="lastPrice">79.140</p>
+                    <p class="price" id="quantity">7</p>
+                    <button class="changes btn btn-sm px-4" id="action" poolId="" account="">BUY</button>
+                </div> -->
+
+            </section>
+            </div>
+        </div>
+    </div>
+
     <!--Footer section starts-->
 <footer>
     <div class="footer fixed-bottom">
@@ -46,6 +72,5 @@
 <script src="../js/jquery-3.3.1.min.js"></script>
 <script src="../js/popper.min.js"></script>
 <script src="../js/bootstrap-4.3.1.js"></script>
-<script src="https://widgets.coingecko.com/coingecko-coin-list-widget.js"></script>
 </body>
 </html>
