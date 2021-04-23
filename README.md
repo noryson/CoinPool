@@ -17,7 +17,10 @@ Coinpool platform allows for the creation of contributing groups (thrift coopera
 
 
 ## Installation Process
-Open 
+1. Fork this repository
+2. Open Remix IDE and clone the forked repository
+3. Compile the solidity files
+4. Inject web3 to link your metamask wallet to the Dapp
 
 
 
