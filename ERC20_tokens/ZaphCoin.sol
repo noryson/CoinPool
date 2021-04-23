@@ -28,7 +28,7 @@ contract ZaphodToken is ICoinPoolVaultToken {
     using SafeMath for uint256;
 
     // Constructor
-    constructor() public {  
+    constructor() {  
       balances[msg.sender] = totalSupply;
     }   
     
@@ -50,6 +50,7 @@ contract ZaphodToken is ICoinPoolVaultToken {
     // Transfer 
     function transfer(address receiver, uint numTokens) public returns (bool) {
       require(numTokens <= balances[msg.sender]);
+      
       balances[msg.sender] = balances[msg.sender].sub(numTokens);
       balances[receiver] = balances[receiver].add(numTokens);
       emit Transfer(msg.sender, receiver, numTokens);
@@ -59,7 +60,6 @@ contract ZaphodToken is ICoinPoolVaultToken {
     // Approve
     function approve(address delegate, uint numTokens) public returns (bool) {
       allowed[msg.sender][delegate] = numTokens;
-      Approval(msg.sender, delegate, numTokens);
       emit Approval(msg.sender, delegate, numTokens);      
       return true;
     }
@@ -78,7 +78,7 @@ contract ZaphodToken is ICoinPoolVaultToken {
     
     
     // Transfer to vault
-    function transferToVault(Vault vault, uint numTokens) public returns (bool) {
+    function transferToVault(Vault vault, uint numTokens) override external returns (bool) {
       address vaultAddress = address(vault);
       
       if (approve(vaultAddress, numTokens)) {
