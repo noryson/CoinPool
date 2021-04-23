@@ -216,13 +216,11 @@ contract Pool {
 
 
     function isPoolStatus_initialising() public view returns(bool) {
-        if(poolStatus == PoolStatus.initialising)
-            return true;
+        return (poolStatus == PoolStatus.initialising);
     } // isPoolStatus_initialising()
 
     function isPoolStatus_addingmembers() public view returns(bool) {
-        if(poolStatus == PoolStatus.addingmembers)
-            return true;
+        return (poolStatus == PoolStatus.addingmembers);
     } // isPoolStatus_addingmembers()
     
     function setPoolStatusTo_concluded() public {
@@ -240,8 +238,7 @@ contract Pool {
     } // isPoolStatus_running()
 
     function isPoolStatus_concluded() public view returns(bool) {
-        if(poolStatus == PoolStatus.concluded)
-            return true;
+        return (poolStatus == PoolStatus.concluded);
     } // isPoolStatus_concluded()
 
     function runThisPool(CyclesList listInit) public /*onlyWhenItsReadyToRun*/ returns(bool _value) {
