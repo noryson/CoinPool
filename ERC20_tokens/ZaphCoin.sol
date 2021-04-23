@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity >= 0.8.0;
 
 import "../Models/Vault.sol";
@@ -50,7 +51,7 @@ contract ZaphodToken is ICoinPoolVaultToken {
     // Transfer 
     function transfer(address receiver, uint numTokens) public returns (bool) {
       require(numTokens <= balances[msg.sender]);
-      
+
       balances[msg.sender] = balances[msg.sender].sub(numTokens);
       balances[receiver] = balances[receiver].add(numTokens);
       emit Transfer(msg.sender, receiver, numTokens);
@@ -83,6 +84,9 @@ contract ZaphodToken is ICoinPoolVaultToken {
       
       if (approve(vaultAddress, numTokens)) {
         return (transfer(vaultAddress, numTokens));
+      }
+      else {
+        return false;
       }
 
     } //transferToVault()
