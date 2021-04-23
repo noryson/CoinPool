@@ -13,11 +13,19 @@ Coinpool platform allows for the creation of contributing groups (thrift coopera
 2. [HTML5](https://dev.w3.org/html5/spec-LC/)
 3. [Bootstrap4 - CSS3](https://getbootstrap.com/)
 4. [Solidity](https://soliditylang.org/)
-5. [Web3 Provider](https://docs.walletconnect.org/quick-start/dapps/web3-provider) 
+5. [Web3 Provider](https://docs.walletconnect.org/quick-start/dapps/web3-provider)
+6. [Metamask](https://metamask.io)
+7. IDE
+    *[BSC IDE](https://bscide.com)
+    *[Remix IDE](http://remix.ethereum.org/)
+    *[VS Code](https://code.visualstudio.com/)
 
 
 ## Installation Process
-Open 
+1. Fork this repository
+2. Open Remix IDE and clone the forked repository
+3. Compile the solidity files
+4. Inject web3 to link your metamask wallet to the Dapp
 
 
 
