@@ -3,6 +3,11 @@ $(document).ready(function(){
 var isConnected = false;
 var abi = [
 	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -18,6 +23,19 @@ var abi = [
 		"name": "buyStake",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "coinPoolTokenAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -67,116 +85,6 @@ var abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_assetName",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "depositAsset",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "nows",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "then",
-				"type": "uint256"
-			}
-		],
-		"name": "Check",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_poolId",
-				"type": "uint256"
-			}
-		],
-		"name": "joinPool",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_poolId",
-				"type": "uint256"
-			}
-		],
-		"name": "payPoolCycle",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
-			}
-		],
-		"name": "servicePool",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_assetName",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_receiver",
-				"type": "address"
-			}
-		],
-		"name": "withdrawAsset",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "dashboard",
 		"outputs": [
@@ -209,6 +117,24 @@ var abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_assetName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "depositAsset",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -266,6 +192,25 @@ var abi = [
 	{
 		"inputs": [
 			{
+				"internalType": "string",
+				"name": "tokenName",
+				"type": "string"
+			}
+		],
+		"name": "getTokenAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "_account",
 				"type": "address"
@@ -286,24 +231,45 @@ var abi = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "id",
+				"name": "_poolId",
 				"type": "uint256"
-			},
+			}
+		],
+		"name": "joinPool",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "no",
+				"name": "_poolId",
 				"type": "uint256"
 			}
 		],
-		"name": "viewAuctionedMembers",
-		"outputs": [
+		"name": "payPoolCycle",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
 			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"name": "servicePool",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -532,17 +498,229 @@ var abi = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_assetName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_receiver",
+				"type": "address"
+			}
+		],
+		"name": "withdrawAsset",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
 	}
 ];
-var contractAddress = "0x98ad6F4e4eD8c5215bB51511B58dC3ef673e6a80";
+var contractAddress = "0x5b7f25df51B2C0C87eb8EF2685f24bdd18a52816";
 var contract;
 var self;
+
+var erc20ABI = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			}
+		],
+		"name": "allowance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
 
 // var imported = document.createElement('script');
 // imported.src = 'https://cdn.jsdelivr.net/npm/web3@1.3.5/dist/web3.min.js';
 // document.head.appendChild(imported);
 
 // window.addEventListener('load', connectWeb3);
+
+connectWeb3();
+dashboard();
 
 async function connectWeb3() {
     if(window.ethereum){
@@ -579,38 +757,19 @@ async function getSelf(){
     return addr[0].toString();
 }
 
-
 async function dashboard(){
     getSelf().then(async function(addr){
-        const x = await contract.methods.dashboard().call({from: addr});
+		const x = await contract.methods.dashboard().call({from: addr});
         for(i=0; i<x.length; i++){
-            $("#withdrawable"+x[i]['assetName']).html(x[i]['available'] + " " + x[i]['assetName']);
-            $("#staked"+x[i]['assetName']).html(x[i]['staked'] + " " + x[i]['assetName']);
-            $("#contributed"+x[i]['assetName']).html(x[i]['contributed'] + " " + x[i]['assetName']);
-            $("#contributed"+x[i]['assetName']).html(x[i]['contributed'] + " " + x[i]['assetName']);
+            $("#withdrawable"+x[i]['assetName']).html(Web3.utils.fromWei(x[i]['available']) + " " + x[i]['assetName']);
+            $("#staked"+x[i]['assetName']).html(Web3.utils.fromWei(x[i]['staked']) + " " + x[i]['assetName']);
+            $("#contributed"+x[i]['assetName']).html(Web3.utils.fromWei(x[i]['contributed'] )+ " " + x[i]['assetName']);
+            $("#contributed"+x[i]['assetName']).html(Web3.utils.fromWei(x[i]['contributed']) + " " + x[i]['assetName']);
         }
         // console.log(x);
     });
 }
 
-async function deposit(assetName, amount){
-    getSelf().then(async function(addr){
-        if(assetName.toUpperCase() == 'BNB'){
-            status = await contract.methods.depositAsset(assetName, Web3.utils.toWei(amount,'ether')
-                                                        ).send({from: addr, value: Web3.utils.toWei(amount,'ether')}
-                                                        ).catch((err) => {
-                                                            console.log(err)});
-            
-        }
-        else{
-            status = await contract.methods.depositAsset(assetName, Web3.utils.toWei(amount,'ether')).call({from: addr});
-            console.log(status);
-        }
-    });
-}
-
-connectWeb3();
-dashboard();
 
 $("#connectAccount").on("click", async function(e){
     getSelf().then(async function(addr){
@@ -626,10 +785,37 @@ $("#withdrawForm").submit(async function(e){
     withdraw($(this));
 });
 
-$("#depositForm").submit(function(e){
-    e.preventDefault();
-    form = $(this);
-    deposit(form[0].elements[0].value, form[0].elements[1].value);
+$("#depositForm").submit(async function(e){
+	e.preventDefault();
+	form = $(this);
+	assetName = form[0].elements[0].value.toUpperCase();
+	amount = Web3.utils.toWei(form[0].elements[1].value,'ether');
+	getSelf().then(async function(addr){
+		if(assetName == 'BNB'){
+			status = await contract.methods.depositAsset(
+															assetName, amount
+														).send(
+															{from: addr, value: amount}
+														).catch(
+															(err) => {console.log(err)}
+														);
+		}
+		else{
+			console.log(assetName,amount);
+			tokenAddress = await contract.methods.getTokenAddress(assetName).call({from: addr});
+			// tokenAddress = await contract.methods.coinPoolTokenAddress().call({from: addr});
+			vaultAddress = await contract.methods.getMap_ofVaults().call({from: addr});
+			console.log(tokenAddress, vaultAddress);
+			tokenContract = await new window.web3.eth.Contract(erc20ABI, tokenAddress);
+
+			approve = await tokenContract.methods.approve(vaultAddress,amount).send({from: addr});
+			status = await contract.methods.depositAsset(assetName, amount).send({from: addr})
+																										.catch(
+																											(err) => {console.log(err)}
+																										);
+			console.log(status);
+		}
+	});
 });
 
 
@@ -638,7 +824,7 @@ $("#createPool").submit(async function(e){
     form = $(this);
     poolName = form[0].elements[0].value;
     asset = form[0].elements[1].value.toUpperCase();
-    amount = form[0].elements[2].value;
+    amount = Web3.utils.toWei(form[0].elements[2].value);
     stakingAsset = form[0].elements[3].value.toUpperCase();
     getSelf().then(async function(addr){
         status = await contract.methods.createPool(poolName, asset, amount, stakingAsset
@@ -664,9 +850,9 @@ $("#loadRunningPools").on("click", async function(e){
 					<h6 class="font-weight-bold my-0">${pool.poolName}</h6>
 					<div class="d-flex justify-content-between align-items-center">
 						<div><small>Pool asset:</small> <code>${pool.poolAssetName}</code></div>
-						<div><small>Asset amount:</small> <code>${pool.poolAssetAmount} ${pool.poolAssetName}</code></div>
+						<div><small>Asset amount:</small> <code>${Web3.utils.fromWei(pool.poolAssetAmount)} ${pool.poolAssetName}</code></div>
 						<div><small>Staking asset:</small> <code>${pool.stakeAssetName}</code></div>
-						<div><small>Staking asset amount:</small> <code >${pool.stakeAssetAmount} ${pool.stakeAssetName}</code></div>
+						<div><small>Staking asset amount:</small> <code >${Web3.utils.fromWei(pool.stakeAssetAmount)} ${pool.stakeAssetName}</code></div>
 						<div><small>Member status:</small> <code>${pool.currentNoOfMembers}/${pool.maxNoOfMembers}</code></div>
 						<a href="viewpool.html?id=${pool.id}" type="button" class="btn-warning btn-sm viewPool">View</a>
 					</div>
@@ -685,7 +871,7 @@ $("#loadPendingPools").on("click", async function(e){
                                                     )/*.then(function(){
 
                                                     })*/;
-        // console.log(pools);                                                    
+        console.log(pools);                                                    
         for(i=0; i<pools.length; i++){
 			pool = await contract.methods.viewPool(pools[i]).call({from: addr}).then( function(pool){
 				$("#pendingPools").append(
@@ -694,8 +880,8 @@ $("#loadPendingPools").on("click", async function(e){
 						<img src="../Includes/icons/shape.png" class="float-left mt-2" width="15" height="12">
 						<div class="card-body p-0">
 								<h5 class="card-title font-weight-bolder"><span>${pool.poolName}</span></h5>
-								<p class="mb-1">Contributing<code> ${pool.poolAssetAmount} ${pool.poolAssetName}</code></p>
-								<p>Staking<code > ${pool.stakeAssetAmount} ${pool.stakeAssetName}</code></p>
+								<p class="mb-1">Contributing<code> ${Web3.utils.fromWei(pool.poolAssetAmount)} ${pool.poolAssetName}</code></p>
+								<p>Staking<code > ${Web3.utils.fromWei(pool.stakeAssetAmount)} ${pool.stakeAssetName}</code></p>
 						</div>
 						<div class="card-footer p-0 text-muted">
 							<img src="../Includes/icons/person.svg" alt="user">${pool.currentNoOfMembers}/${pool.maxNoOfMembers}
@@ -726,26 +912,34 @@ $("#viewPool").on("click", async function(e){
 	id = $.urlParam('id');
     getSelf().then(async function(addr){
         pool = await contract.methods.viewPool(id).call({from: addr});//.then( function(pool){
-		$("#poolID").html(pool.id);
+		$("#payin").attr("poolid", pool.id);
 		$("#poolName").html(pool.poolName);
 		$("#poolAsset").html(pool.poolAssetName);
-		$("#amount").html(pool.poolAssetAmount);// +" " + pool.poolAssetName);
+		$("#amount").html(Web3.utils.fromWei(pool.poolAssetAmount));// +" " + pool.poolAssetName);
 		$("#currentCycle").html(pool.currentCycleNo);
 		$("#remainingCycles").html(parseInt(pool.currentNoOfMembers) - parseInt(pool.currentCycleNo));
-		$("#status").html(pool.poolStatus);
-		pool.currentCycleNo = 1;
+		$("#poolStatus").html(pool.poolStatus);
+		//pool.currentCycleNo = 1;
 		if(parseInt(pool.currentCycleNo) /*|| parseInt(pool.currentNoOfMembers) != parseInt(pool.currentCycleNo)*/){
+			
 			cycle = await contract.methods.viewCycle(id, pool.currentCycleNo).call({from: addr}).then( function(cycle, pool){
 				if(cycle.cycleStatus != "concluded"){
-					$("#cycleEarnings").html(cycle.payedMembers.length * parseInt($("#amount").html()));
-					$("#status").html(cycle.cycleStatus);
+					$("#cycleEarnings").html(cycle.l2 * $("#amount").html());
+					$("#poolStatus").html(cycle.cycleStatus);
+					for(i=0; i<cycle.l2; i++){
+						if(cycle.payedMembers[i] == addr){
+							$("#payin").hide();
+							break;
+						}
+					}
 				}
 			});
 
-			for(i=0; i<pool.currentCycleNo; i++){
-				cycle = await contract.methods.viewCycle(id, i).call({from: addr}).then( function(cycle){
+			for(i=1; i<=pool.currentCycleNo; i++){
+				cycle = await contract.methods.viewCycle(pool.id, i).call({from: addr}).then( function(cycle){
 					if(cycle.winner == addr){
-						$("#winSatus").html(`You won cycle ${i}`);
+						$("#winStatus").html(`You won cycle ${i}`);
+						return;
 					}
 				});
 			}
@@ -754,10 +948,6 @@ $("#viewPool").on("click", async function(e){
 	});
 });
 
-
-async function viewCycle(poolId, cycleNo){
-	
-}
 
 $("#loadMarkets").on("click", async function(e){
     e.preventDefault();
@@ -770,8 +960,8 @@ $("#loadMarkets").on("click", async function(e){
 					<div class="bold-pair">
 						<h2 class="font-weight-bold">${auctionData.auctions[i].stakeAssetName}<span class="unit font-weight-bold">/${auctionData.auctions[i].poolAssetName}</span></h2>
 					</div>
-					<p class="price" id="lastPrice">${/*auctionData.auctions[i].price*/1}</p>
-					<p class="price" id="quantity">${auctionData.auctions[i].poolAssetAmount}</p>
+					<p class="price" id="lastPrice">${1}</p>
+					<p class="price" id="quantity">${Web3.utils.fromWei(auctionData.auctions[i].poolAssetAmount)}</p>
 					<button class="changes btn btn-sm px-4 action" id="action" poolId="${auctionData.auctions[i].poolId}" account="${auctionData.auctions[i].account}">BUY</button>
 				</div>`
 			);
@@ -783,9 +973,21 @@ $("#markets").on("click", ".action", async function(e){
 	id = $(this).attr("poolid");
 	account = $(this).attr("account");
     getSelf().then(async function(addr){
-        buy = await contract.methods.buyStake(id, account).send({from: addr});
+        buy = await contract.methods.buyStake(id, account).send({from: addr}).catch( (err) => {console.log(err)});
     });
 });
+
+$("#payin").on("click", async function(e){
+	poolid = $(this).attr("poolid");
+    getSelf().then(async function(addr){
+        pools = await contract.methods.payPoolCycle(poolid).send({from: addr}
+                                                    )/*.then(function(){
+
+                                                    })*/;
+    });
+});
+
+
 
 $.urlParam = function(name){
 	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);

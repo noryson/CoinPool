@@ -82,14 +82,13 @@ contract Cycle{
     }
     
     function payWinner() onlyWhenAllocatingWinnerForCycle public{
-        // require(WinningMember.getAccount() > 0, "Winner not selected");
         (string memory name, uint256 amount) = parentPool.getRequirement_forContributionAsset();
         Vault vault = parentPool.getMap_ofVaults().getVault_withName(name);
         for(uint i=0; i<poolMembersList.getLength(); i++){
             vault.transferContribution_fromPool(parentPool.getPoolId(), 
                                                 poolMembersList.getMember_atIndex(i).getAccount(),
                                                 WinningMember.getAccount(), amount - (amount/100));
-            //send incentive to contract
+            //send incentive to communitiy
             vault.transferContribution_fromPool(parentPool.getPoolId(), 
                                                 parentPool.getMembersList().getMember_atIndex(i).getAccount(),
                                                 parentPool.getContractOwner(), (amount/100));
@@ -118,7 +117,10 @@ contract Cycle{
         Vault vault = parentPool.getMap_ofVaults().getVault_withName(name);
         vault.transfer(_buyer, _member, amount);
         vault.transferContribution_toPool(_member, parentPool.getPoolId(), amount);
-        vault.transferStake_fromPool(parentPool.getPoolId(), _member, _buyer, amount);
+        
+        (name, amount) = parentPool.getRequirement_forStakingAsset();
+        vault = parentPool.getMap_ofVaults().getVault_withName(name);
+        vault.transferStake_fromPool(parentPool.getPoolId(), _member, _buyer, amount/10);
         payedMembers.push(member);
         
         // remove member from auction, if auction is empty, change state to running
@@ -131,7 +133,7 @@ contract Cycle{
         }
         
         if(auctioningMembers.length == 0){
-            cycleStatus = CycleStatus.allocateWinner;
+            cycleStatus = CycleStatus.initialising;
         }
     }
     
@@ -399,6 +401,7 @@ contract CyclesList{
          listOfCycles.push(_NewCycle);
 
          _index = _cycleNo -1;
+         parentPool.increamentCycleNo();
         
     } // addNewCycle()
 

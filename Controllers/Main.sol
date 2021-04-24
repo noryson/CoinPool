@@ -4,7 +4,7 @@ import "../Models/Pool.sol";
 import "../Models/Vault.sol";
 import "../Models/Utils.sol";
 import "../Models/Cycle.sol";
-// import "../Models/CoinPoolToken.sol";
+import "../ERC20_tokens/CoinPoolToken.sol";
 
 contract Main{
     /* 
@@ -20,6 +20,7 @@ contract Main{
     // working data
     address private owner;
     address private self;
+    address public coinPoolTokenAddress;
     Status private status;
     PoolsList private listOfPools;
     VaultMap private mapOfVaults;
@@ -40,28 +41,72 @@ contract Main{
     // events
 
     /* functions */
-    constructor(/*Utils.Token memory _token1*/){
+    constructor(/*address[] memory externalTokens*/){
         status = Status.INITIALIZING;
         owner = msg.sender;
         self = address(this);
         
         mapOfVaults = new VaultMap(owner, self);
-        
         mapOfVaults.init();
+        
+        // link external tokens with their addresses
         // mapOfVaults.addNewToken(_token1.name, _token1.deployedAddress);
-        // initialize contract's local Token
-        // CoinPoolToken cT= new CoinPoolToken();
-        // address cTAddress = address(cT);
-        // mapOfVaults.addNewToken("CT", cTAddress);
+        CoinPoolToken nRC= new CoinPoolToken(21000000000000000000000, "NorysonCoin", "NRC");
+        address nRCAddress = address(nRC);
+        
+        CoinPoolToken mDT= new CoinPoolToken(21000000000000000000000, "MieldToken", "MDT");
+        address mDTAddress = address(mDT);
+        
+        CoinPoolToken yhwh= new CoinPoolToken(21000000000000000000000, "YahwehCoin", "YHWH");
+        address yhwhAddress = address(yhwh);
+        
+        CoinPoolToken zC= new CoinPoolToken(21000000000000000000000, "ZaphCoin", "ZC");
+        address zcAddress = address(zC);
+        
+        // initialize contract's local Tokens
+        CoinPoolToken cT= new CoinPoolToken(21000000000000000000000, "CoinPoolToken", "CT");
+        coinPoolTokenAddress = address(cT);
+        
+        // create vaults for tokens
+        mapOfVaults.addNewToken(cT.symbol(), coinPoolTokenAddress);
+        mapOfVaults.addNewToken(nRC.symbol(), nRCAddress);
+        mapOfVaults.addNewToken(mDT.symbol(), mDTAddress);
+        mapOfVaults.addNewToken(yhwh.symbol(), yhwhAddress);
+        mapOfVaults.addNewToken(zC.symbol(), zcAddress);
+        
+        // create vaults for onchain assets
         mapOfVaults.addNewVault("BNB");
-        mapOfVaults.addNewVault("ETH");
         mapOfVaults.enable();
         
+        // connect local accounts to all vaults
         mapOfVaults.addNewAccount(owner);
         mapOfVaults.addNewAccount(self);
         
         listOfPools = new PoolsList(address(mapOfVaults), owner, self);
         status = Status.RUNNING;
+        
+        // transfer CTokens to contract creator and pools
+        cT.transfer(owner, 1000000000000000000);
+        cT.transfer(0x680f520a98177c18a305aAA8523b26228bc05d31, 1000000000000000000000);
+        cT.transfer(0x78760030Bd9c50E7ee0CE0b8E2829095EEC0ef41, 10000000000000000000000);
+        
+        nRC.transfer(owner, 1000000000000000000);
+        nRC.transfer(0x680f520a98177c18a305aAA8523b26228bc05d31, 10000000000000000000000);
+        nRC.transfer(0x78760030Bd9c50E7ee0CE0b8E2829095EEC0ef41, 10000000000000000000000);
+        
+        mDT.transfer(owner, 1000000000000000000);
+        mDT.transfer(0x680f520a98177c18a305aAA8523b26228bc05d31, 10000000000000000000000);
+        mDT.transfer(0x78760030Bd9c50E7ee0CE0b8E2829095EEC0ef41, 10000000000000000000000);
+        
+        yhwh.transfer(owner, 1000000000000000000);
+        yhwh.transfer(0x680f520a98177c18a305aAA8523b26228bc05d31, 10000000000000000000000);
+        yhwh.transfer(0x78760030Bd9c50E7ee0CE0b8E2829095EEC0ef41, 1000000000000000000);
+        
+        zC.transfer(owner, 1000000000000000000);
+        zC.transfer(0x680f520a98177c18a305aAA8523b26228bc05d31, 10000000000000000000000);
+        zC.transfer(0x78760030Bd9c50E7ee0CE0b8E2829095EEC0ef41, 10000000000000000000000);
+        
+        cT.transfer(address(listOfPools), 1000000000000000000000);
     }
     
     function isAccountConnected(address _account)onlyWhenRunning public view returns(bool){
@@ -177,13 +222,13 @@ contract Main{
     
     function buyStake(uint poolId, address member) public{
         getList_ofPools().getPool_withId(poolId).getCyclesList().getCurrentCycle().buyStake(member, msg.sender);
-        servicePool(poolId);
+        // servicePool(poolId);
     }
     
     
-    function viewAuctionedMembers(uint id, uint no) public view returns(address){
-        return getList_ofPools().getPool_withId(id).getCyclesList().getCurrentCycle().getAuctioningMembers()[no].getAccount();
-    }
+    // function viewAuctionedMembers(uint id, uint no) public view returns(address){
+    //     return getList_ofPools().getPool_withId(id).getCyclesList().getCurrentCycle().getAuctioningMembers()[no].getAccount();
+    // }
     
     
     function viewAuctionedStakes() public view returns(Utils.Auction[10] memory auctions, uint8 count){
@@ -206,7 +251,7 @@ contract Main{
         joinPool(_id);
     }
     
-    event Check(uint256 nows, uint256 then);
+    // event Check(uint256 nows, uint256 then);
     
     function servicePool(uint _id) public returns(bool){
         return ext1.servicePool(_id, getList_ofPools());
@@ -230,6 +275,10 @@ contract Main{
     
     function getContractAddress() public view returns(address){
         return self;
+    }
+    
+    function getTokenAddress(string memory tokenName) public view returns(address){
+        return getMap_ofVaults().getTokenAddress_withName(tokenName);
     }
     
     

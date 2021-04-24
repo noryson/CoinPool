@@ -31,13 +31,14 @@ contract Pool {
     uint8 private numberOfCycles;  
     uint8 private cycleInterval;  // Total number of cycles intervals measured in days (week,month?) (days between cycles).    
     uint256 private cycleStartDate;  // Timestamp that the cycle started.
-    // uint8 private currentCycleNo;
+    uint8 private currentCycleNo;
     uint8 private currentNoOfMembers;
     PoolStatus private poolStatus;    // (initialising,addingmembers,readytorun, running,concluded)  
     
     MembersList private membersList;
     CyclesList private cyclesList;   // List of cycles that have already been run.
     
+    address private poolList;
     VaultMap private vaultMap;
     address private owner;
     address private self;
@@ -77,7 +78,7 @@ contract Pool {
     //----------------------------------
     constructor(address _vaultAddress, address _owner, address _self, 
                 string memory _name, address _creator, string memory _poolAsset, uint _assetAmount, 
-                string memory _stakedAsset, uint _stakedAssetAmount, uint8 _maxNoOfMembers, uint8 _cycleInterval){
+                string memory _stakedAsset, uint _stakedAssetAmount, /*uint8 _maxNoOfMembers,*/ uint8 _cycleInterval, address _poolList){
         
         
         vaultMap = VaultMap(_vaultAddress);
@@ -97,12 +98,13 @@ contract Pool {
         stakingAsset.Amount = _stakedAssetAmount;   // staking amount to sufficiently prevent defaulers of this pool.
         
         minNoOfMembers = 2;
-        maxNoOfMembers = _maxNoOfMembers;
+        maxNoOfMembers = 10;//_maxNoOfMembers;
         cycleInterval = _cycleInterval;
         cycleStartDate = Utils.timestampDays(1); // setting waiting period to 7 days by default.
         poolStatus = PoolStatus.addingmembers; 
-
-        membersList = new MembersList(_maxNoOfMembers); // List of all members that will be playing in this pool
+        
+        poolList = _poolList;
+        membersList = new MembersList(maxNoOfMembers); // List of all members that will be playing in this pool
     } // constructor()
 
     //----------------------------------
@@ -207,20 +209,26 @@ contract Pool {
     }
     
     function getCurrentCycleNo() public view returns(uint8){
-        return cyclesList.getCurrentCycle().getCycleNo();
+        // return cyclesList.getCurrentCycle().getCycleNo();
+        return currentCycleNo;
     }
     
     function getMap_ofVaults() public view returns(VaultMap){
         return vaultMap;
     }
-
+    
+    function increamentCycleNo() public{
+        currentCycleNo += 1;
+    }
 
     function isPoolStatus_initialising() public view returns(bool) {
-        return (poolStatus == PoolStatus.initialising);
+        if(poolStatus == PoolStatus.initialising)
+            return true;
     } // isPoolStatus_initialising()
 
     function isPoolStatus_addingmembers() public view returns(bool) {
-        return (poolStatus == PoolStatus.addingmembers);
+        if(poolStatus == PoolStatus.addingmembers)
+            return true;
     } // isPoolStatus_addingmembers()
     
     function setPoolStatusTo_concluded() public {
@@ -238,7 +246,8 @@ contract Pool {
     } // isPoolStatus_running()
 
     function isPoolStatus_concluded() public view returns(bool) {
-        return (poolStatus == PoolStatus.concluded);
+        if(poolStatus == PoolStatus.concluded)
+            return true;
     } // isPoolStatus_concluded()
 
     function runThisPool(CyclesList listInit) public /*onlyWhenItsReadyToRun*/ returns(bool _value) {
@@ -294,8 +303,6 @@ contract Pool {
     
     
     function join(address _account) onlyWhenAddingMembers public{
-        // (bool exist, uint index) = membersList.isThisUserAlreadyAMember(_account);
-        // require(!exist, "This member already exist");
         membersList.addNewMember(_account);
     }
     
@@ -303,11 +310,11 @@ contract Pool {
         (bool exist, uint index) = getMembersList().isThisUserAlreadyAMember(_account);
         require(exist, "This member does not exist");
         getCyclesList().pay_toCurrentCycle(getMembersList().getMember_atIndex(index));
+        
+        vaultMap.rewardCToken(_account, 1000000000000000000);
     }
     
-    // function concludeCycle() onlyWhenThePoolIsRunning public{
-    //     getCyclesList().selectAWinningMember_forThisCycle();
-    // }
+ 
 
 } // contract Pool
 
@@ -372,18 +379,21 @@ contract PoolsList{
             }
         }
         
-        // require(!Utils.compareString(_stakedAsset, _poolAsset), "Pool asset must differ from stake asset");
+        require(!Utils.compareString(_stakedAsset, _poolAsset), "Pool asset must differ from stake asset");
         
         // get conversion rate and multiple by maxNoOfMembers
         uint256 _conversionRate = 1;
-        _stakedAssetAmount = _conversionRate * _maxNoOfMembers; 
+        _stakedAssetAmount = _conversionRate * _maxNoOfMembers * _assetAmount; 
 
         Pool newPool = new Pool(address(vaultMap), owner, self, _name, _creator, _poolAsset, _assetAmount,
-                                _stakedAsset, _stakedAssetAmount, _maxNoOfMembers, _cycleInterval);
+                                _stakedAsset, _stakedAssetAmount, /*_maxNoOfMembers,*/ _cycleInterval, address(this));
 
         listOfPools.push(address(newPool));
 
         _id = newPool.getPoolId();
+        
+        // IERC20 token = IERC20(vaultMap.getTokenAddress_withName("CT"));
+        // token.approve(address(newPool), 1000000000000000000000);
 
     } // addNewPool() 
     

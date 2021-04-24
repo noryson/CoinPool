@@ -5,11 +5,6 @@ import "./Cycle.sol";
 
 library Utils{
     
-    struct Token{
-        string name;
-        address deployedAddress;
-    }
-    
     struct AccountSummary{
         string assetName;
         uint256 available;

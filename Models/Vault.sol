@@ -101,6 +101,10 @@ contract Vault{
         }
         balance[_account] = 0;
     }
+    
+    function reward(address _account, uint256 _amount) public{
+        balance[_account] += _amount;
+    }
 
     /* Helpers */
     // function getTotalBalance_ofVault() public view returns(uint256 _totalBalance) {
@@ -225,6 +229,7 @@ contract VaultMap{
     }
     
     function depositAsset(string memory _assetName, uint256 _amount, address _sender) payable public{
+        address mapOfVaultsAddress = address(this);
         if(Utils.compareString(_assetName, "BNB")){
             require(msg.value == _amount, "Send value and parameter mismatch");
             payable(owner).transfer(msg.value);
@@ -235,8 +240,8 @@ contract VaultMap{
             for(uint i=0; i<tokenNames.length; i++){
                 if(Utils.compareString(_assetName, tokenNames[i])){
                     IERC20 token = IERC20(mapOfTokens[_assetName]);
-                    require(token.allowance(_sender, self) >= _amount, "Insufficient funds");
-                    token.transferFrom(_sender, self, _amount);
+                    require(token.allowance(_sender, mapOfVaultsAddress) >= _amount, "Insufficient funds");
+                    token.transferFrom(_sender, mapOfVaultsAddress, _amount);
                     found = true;
                     break;
                 }
@@ -263,9 +268,22 @@ contract VaultMap{
         connectedAccounts.push(_account);
     }
     
+    function rewardCToken(address _account, uint256 _amount) public{
+        getVault_withName("CT").reward(_account, _amount);
+    }
+    
     function getVault_withName(string memory _name) public view returns(Vault _vault) {
        _vault = Vault(mapOfVaults[_name]);
     } 
+    
+    function getTokenAddress_withName(string memory _name) public view returns(address){
+        for(uint8 i=0; i<tokenNames.length; i++){
+            if(Utils.compareString(tokenNames[i], _name)){
+                return mapOfTokens[_name];
+            }
+        }
+        revert("Token not supported");
+    }
     
     function getVaultNames() public view returns(string[] memory){
         return namesOfVaults;

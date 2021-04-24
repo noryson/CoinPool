@@ -37,8 +37,16 @@
 		<div class="modal-body text-dark">
 			<form action="" novalidate id="withdrawForm">
 				<div class="form-group">
-				  <label for="asset">Asset:</label>
-				  <input type="asset" class="form-control" id="asset">
+				  <!-- <label for="asset">Asset:</label>
+				  <input type="asset" class="form-control" id="asset"> -->
+				  <select class="form-control" id="asset" name="stakeAsset">
+					<option>BNB</option>
+					<option>CT</option>
+					<option>NRC</option>
+					<option>YHWH</option>
+					<option>MDT</option>
+					<option>ZC</option>
+				  </select>
 				</div>
 				<div class="form-group">
 				  <label for="amount">Amount:</label>
@@ -76,8 +84,16 @@
 		<div class="modal-body text-dark">
 			<form action="" novalidate id="depositForm">
 				<div class="form-group">
-				  <label for="asset">Asset:</label>
-				  <input type="asset" class="form-control" id="asset">
+				  <!-- <label for="asset">Asset:</label>
+				  <input type="asset" class="form-control" id="asset"> -->
+				  <select class="form-control" id="asset" name="stakeAsset">
+					<option>BNB</option>
+					<option>CT</option>
+					<option>NRC</option>
+					<option>YHWH</option>
+					<option>MDT</option>
+					<option>ZC</option>
+				  </select>
 				</div>
 				<div class="form-group">
 				  <label for="amount">Amount:</label>
@@ -159,24 +175,94 @@
 				</div>	
 			</div>
 
-<div class="container-fluid mt-4 col-lg-6 mb-5">
+<div class="container-fluid mt-4 col-lg-6">
 		<div class="row col-12 col-md-12 col-sm-12 col-lg-12 mx-auto bg-light text-dark p-2 rounded text-left">
 				<div class="d-flex align-items-center col-sm-12 col-xl-12 col-md-12 col-12">&nbsp;&nbsp;
-					<img class="mr-3" src="../Includes/icons/cToken.png" alt="CT" width="15"> 
+					<img class="mr-3" src="../Includes/icons/cToken.png" alt="CT" width="20"> 
 					<div>
 						<bold>CoinPool Token</bold>
 						<div class="d-flex">
-							<div class="mr-2"><small>Withdrawable:</small> <code>200.453 CT</code></div>
-							<div class="mr-2"><small>Staked:</small> <code>329.9388 CT</code></div>  
-							<div><small>Contributed:</small> <code>300.48 CT</code></div>
+							<div class="mr-3"><small>Withdrawable:</small> <code id="withdrawableCT">0 CT</code></div>
+							<div class="mr-3"><small>Staked:</small> <code id="stakedCT">0 CT</code></div>  
+							<div><small>Contributed:</small> <code id="contributedCT">0 CT</code></div>
 						</div>
 					</div>
-					<div class="ml-auto">200.453</div>
+					<div id="totalCT" class="ml-auto">0</div>
 				</div>
 				</div>	
 			</div>
-<!--Assets Ends-->
+
+		<div class="container-fluid mt-4 col-lg-6">
+				<div class="row col-12 col-md-12 col-sm-12 col-lg-12 mx-auto bg-light text-dark p-2 rounded text-left">
+						<div class="d-flex align-items-center col-sm-12 col-xl-12 col-md-12 col-12">&nbsp;&nbsp;
+							<img class="mr-3" src="../Includes/icons/NRC.png" alt="NRC" width="20"> 
+							<div>
+								<bold>Noryson Coin</bold>
+								<div class="d-flex">
+									<div class="mr-3"><small>Withdrawable:</small> <code id="withdrawableNRC">0 NRC</code></div>
+									<div class="mr-3"><small>Staked:</small> <code id="stakedNRC">0 NRC</code></div>  
+									<div><small>Contributed:</small> <code id="contributedNRC">0 NRC</code></div>
+								</div>
+							</div>
+							<div id="totalNRC" class="ml-auto">0</div>
+						</div>
+						</div>	
+					</div>
+		
+	<div class="container-fluid mt-4 col-lg-6">
+		<div class="row col-12 col-md-12 col-sm-12 col-lg-12 mx-auto bg-light text-dark p-2 rounded text-left">
+				<div class="d-flex align-items-center col-sm-12 col-xl-12 col-md-12 col-12">&nbsp;&nbsp;
+					<img class="mr-3" src="../Includes/icons/zt.png" alt="ZC" width="20"> 
+					<div>
+						<bold>Zaph Coin</bold>
+						<div class="d-flex">
+							<div class="mr-3"><small>Withdrawable:</small> <code id="withdrawableZC">0 ZC</code></div>
+							<div class="mr-3"><small>Staked:</small> <code id="stakedZC">0 ZC</code></div>  
+							<div><small>Contributed:</small> <code id="contributedZC">0 ZC</code></div>
+						</div>
+					</div>
+					<div id="totalZC" class="ml-auto">0</div>
+				</div>
+				</div>	
+			</div>
+
 	
+<div class="container-fluid mt-4 col-lg-6">
+	<div class="row col-12 col-md-12 col-sm-12 col-lg-12 mx-auto bg-light text-dark p-2 rounded text-left">
+			<div class="d-flex align-items-center col-sm-12 col-xl-12 col-md-12 col-12">&nbsp;&nbsp;
+				<img class="mr-3" src="../Includes/icons/MDT.png" alt="MDT" width="20"> 
+				<div>
+					<bold>Mield Token</bold>
+					<div class="d-flex">
+						<div class="mr-3"><small>Withdrawable:</small> <code id="withdrawableMDT">0 MDT</code></div>
+						<div class="mr-3"><small>Staked:</small> <code id="stakedMDT">0 MDT</code></div>  
+						<div><small>Contributed:</small> <code id="contributedMDT">0 MDT</code></div>
+					</div>
+				</div>
+				<div id="totalMDT" class="ml-auto">0</div>
+			</div>
+			</div>	
+		</div>
+
+	
+<div class="container-fluid mt-4 col-lg-6 mb-5">
+	<div class="row col-12 col-md-12 col-sm-12 col-lg-12 mx-auto bg-light text-dark p-2 rounded text-left">
+			<div class="d-flex align-items-center col-sm-12 col-xl-12 col-md-12 col-12">&nbsp;&nbsp;
+				<img class="mr-3" src="../Includes/icons/YHWH.png" alt="YHWH" width="20"> 
+				<div>
+					<bold>Yahweh Token</bold>
+					<div class="d-flex">
+						<div class="mr-3"><small>Withdrawable:</small> <code id="withdrawableYHWH">0 YHWH</code></div>
+						<div class="mr-3"><small>Staked:</small> <code id="stakedYHWH">0 YHWH</code></div>  
+						<div><small>Contributed:</small> <code id="contributedYHWH">0 YHWH</code></div>
+					</div>
+				</div>
+				<div id="totalYHWH" class="ml-auto">0</div>
+			</div>
+			</div>	
+		</div>
+<!--Assets Ends-->
+	<DIV class="p-5"></DIV>
 <!--Footer section starts-->
 <footer>
   <div class="footer fixed-bottom">
