@@ -28,7 +28,8 @@ Coinpool platform allows for the creation of contributing groups (thrift coopera
 4. Inject web3 to link your metamask wallet to the Dapp
 
 
-
+## Website link
+https://noryson.github.io/CoinPool/Views/
 
 ## Contributors 
 1. Francis Mullan
@@ -39,9 +40,10 @@ Coinpool platform allows for the creation of contributing groups (thrift coopera
 6. Oyindamola Dasola Abiola
 7. Mbora Githua
 8. Olukayode Alao
-9. Francis Mullan
-10. Egunjobi Kehinde
-11. Kingsley Cottrel
+9. Egunjobi Kehinde
+10. Kingsley Cottrel
+
+
 
 
 <p><strong> Thanks for reading through this Readme. We hope it provides you with clarity on how our DApp functions.</strong></p>
